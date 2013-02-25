@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		A991E04916D928F0002C9F54 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = A991E04816D928F0002C9F54 /* Default-568h@2x.png */; };
 		A99A87FB16D8A90600C29688 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A99A87FA16D8A90600C29688 /* QuartzCore.framework */; };
 		A99A87FD16D8A90600C29688 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A99A87FC16D8A90600C29688 /* OpenGLES.framework */; };
 		A99A87FF16D8A90600C29688 /* OpenAL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A99A87FE16D8A90600C29688 /* OpenAL.framework */; };
@@ -125,6 +126,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		A991E04816D928F0002C9F54 /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
 		A99A87F716D8A90600C29688 /* BabyBlocks.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BabyBlocks.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A99A87FA16D8A90600C29688 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		A99A87FC16D8A90600C29688 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
@@ -384,6 +386,7 @@
 		A99A87EE16D8A90600C29688 = {
 			isa = PBXGroup;
 			children = (
+				A991E04816D928F0002C9F54 /* Default-568h@2x.png */,
 				A99A880A16D8A90600C29688 /* BabyBlocks */,
 				A99A87F916D8A90600C29688 /* Frameworks */,
 				A99A87F816D8A90600C29688 /* Products */,
@@ -817,6 +820,7 @@
 				A99A881916D8A90600C29688 /* Icon.png in Resources */,
 				A99A881B16D8A90600C29688 /* Icon@2x.png in Resources */,
 				A99A881E16D8A90600C29688 /* iTunesArtwork in Resources */,
+				A991E04916D928F0002C9F54 /* Default-568h@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -977,8 +981,10 @@
 				GCC_PREFIX_HEADER = BabyBlocks/Prefix.pch;
 				"GCC_THUMB_SUPPORT[arch=armv6]" = "";
 				INFOPLIST_FILE = BabyBlocks/Resources/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 6.1;
 				OTHER_LDFLAGS = "-lz";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				TARGETED_DEVICE_FAMILY = 2;
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -992,8 +998,10 @@
 				GCC_PREFIX_HEADER = BabyBlocks/Prefix.pch;
 				"GCC_THUMB_SUPPORT[arch=armv6]" = "";
 				INFOPLIST_FILE = BabyBlocks/Resources/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 6.1;
 				OTHER_LDFLAGS = "-lz";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				TARGETED_DEVICE_FAMILY = 2;
 				VALIDATE_PRODUCT = YES;
 				WRAPPER_EXTENSION = app;
 			};
@@ -1018,6 +1026,7 @@
 				A99A896A16D8A90800C29688 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
