@@ -10,7 +10,7 @@
 
 #import "AppDelegate.h"
 #import "GameConfig.h"
-#import "HelloWorldLayer.h"
+#import "MainMenuLayer.h"
 #import "RootViewController.h"
 
 @implementation AppDelegate
@@ -41,6 +41,8 @@
 - (void) applicationDidFinishLaunching:(UIApplication*)application
 {
 	// Init the window
+    NSLog(@"RECT = %@ \n", NSStringFromCGRect([[UIScreen mainScreen] bounds]));
+    
 	window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
 	
 	// Try to use CADisplayLink director
@@ -82,12 +84,15 @@
 	// By default, this template only supports Landscape orientations.
 	// Edit the RootViewController.m file to edit the supported orientations.
 	//
+    /*
 #if GAME_AUTOROTATION == kGameAutorotationUIViewController
 	[director setDeviceOrientation:kCCDeviceOrientationPortrait];
 #else
 	[director setDeviceOrientation:kCCDeviceOrientationLandscapeLeft];
 #endif
-	
+     */
+    [director setDeviceOrientation:kCCDeviceOrientationLandscapeLeft];
+
 	[director setAnimationInterval:1.0/60];
 	[director setDisplayFPS:YES];
 	
@@ -110,7 +115,7 @@
 	[self removeStartupFlicker];
 	
 	// Run the intro Scene
-	[[CCDirector sharedDirector] runWithScene: [HelloWorldLayer scene]];
+	[[CCDirector sharedDirector] runWithScene: [MainMenuLayer scene]];
 }
 
 
@@ -144,6 +149,11 @@
 	[window release];
 	
 	[director end];	
+}
+
+- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
+{
+    return NO;
 }
 
 - (void)applicationSignificantTimeChange:(UIApplication *)application {
