@@ -12,6 +12,14 @@
 #import "ColorTouchSprite.h"
 
 
+enum {
+	Z_BG = -1,
+	Z_LAYER = 0,
+	Z_ICON = 2,
+	Z_BLOCK = 5,
+	Z_BLOCK_MOVING = 10
+};
+
 static ccColor3B colors[] = {
 	{255,0,0},   // red
     {255,255,0}, // yellow
@@ -30,7 +38,7 @@ static ccColor3B colors[] = {
 	CCScene *s = [CCScene node];
 
 	PlayGameLayer *node = [[PlayGameLayer alloc] initWithLevel:level withMode:mode withSize:size];
-	[s addChild:node z:0 tag:0];
+	[s addChild:node z:Z_LAYER tag:0];
 	return s;
 }
 
@@ -46,10 +54,9 @@ static ccColor3B colors[] = {
         [self loadLayout];
 
         
-		//Random colored background
-		CCSprite *bg = [CCSprite spriteWithFile:@"bg.png"];
-		bg.position = ccp(0,0);
-		[self addChild:bg z:-1];
+		//background
+        [self drawColoredSpriteAt:ccp(0,0) withRect:CGRectMake(0,0,sz.width*2,sz.height*2) withColor:ccc3(150,150,200) withZ:Z_BG];
+
         
         //draw color box
         [self initColorBox];
@@ -63,7 +70,7 @@ static ccColor3B colors[] = {
 		CCMenuItemFont *quitItem = [CCMenuItemFont itemFromString:@"Quit" target:self selector:@selector(quit:)];
 		CCMenu *menu = [CCMenu menuWithItems: quitItem, nil];
 		menu.position = ccp(100, sz.height - 75);
-		[self addChild:menu z:10];
+		[self addChild:menu z:Z_ICON];
 
     [self drawGridWithOffset:(sz.width/2)];
     [self drawGridWithOffset:(0)];
@@ -73,15 +80,25 @@ static ccColor3B colors[] = {
 	return self;
 }
 
+
+-(void) drawColoredSpriteAt:(CGPoint)position withRect:(CGRect)rect withColor:(ccColor3B)color withZ:(float)z {
+	CCSprite *sprite = [CCSprite spriteWithFile:@"blank.png"];
+	[sprite setPosition:position];
+	[sprite setTextureRect:rect];
+	[sprite setColor:color];
+	[self addChild:sprite];
+	
+	//Set Z Order
+	[self reorderChild:sprite z:z];
+}
+
 /* Add sprites which correspond to grid nodes */
 -(void) drawGridWithOffset:(int) offset {    
     
     int offset_x = [[currentLayout objectForKey:@"offset_x"] intValue];
     int offset_y = [[currentLayout objectForKey:@"offset_y"] intValue];
     int interval = [[currentLayout objectForKey:@"interval"] intValue];
-    
-    NSLog(@"from json %d %d\n",offset_x, offset_y);
-    
+
 	for(int x=0; x<currentSize; x++){
 		for(int y=0; y<currentSize; y++){
             
@@ -99,15 +116,13 @@ static ccColor3B colors[] = {
 	sprites = [[NSMutableArray alloc] init];
     CGSize size = [[CCDirector sharedDirector] winSize];
     
-    
-	//We add 10 randomly colored sprites
-	for(int x=0; x<5; x++){
+    for(int x=0; x<5; x++){
 		ColorTouchSprite *sprite = [ColorTouchSprite spriteWithFile:@"blank.png"];
         
 		sprite.position = ccp(x*100+300, size.height-75);
 		[sprite setTextureRect:CGRectMake(0,0,75,75)];
 		sprite.color = colors[x];
-		[self addChild:sprite z:11];
+		[self addChild:sprite z:Z_BLOCK];
 		[sprites addObject:sprite];
 	}
 }
@@ -162,22 +177,32 @@ static ccColor3B colors[] = {
  */
 
 
+// on "dealloc" you need to release all your retained objects
+- (void) dealloc
+{
+	// in case you have something to dealloc, do it in this method
+	// in this particular example nothing needs to be released.
+	// cocos2d will automatically release all the children (Label)
+    [sprites release];
+    [currentLayout release];
+	
+    [self removeAllChildrenWithCleanup:YES];
+    
+	// don't forget to call "super dealloc"
+    
+	[super dealloc];
+}
+
 /* Process touch events */
 -(void) ccTouchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
 	UITouch *touch = [touches anyObject];
 	CGPoint point = [touch locationInView: [touch view]];
 	point = [[CCDirector sharedDirector] convertToGL: point];
-    NSLog(@"got ccTouchesBegan %d\n", [sprites count]);
-	
 	//Process input for all sprites
 	for(id sprite in sprites){
-        NSLog(@"got POINT %@\n", NSStringFromCGPoint(point));
-        NSLog(@"got RECT %@\n", NSStringFromCGRect([sprite rect]));
 		if(pointIsInRect(point, [sprite rect])){
 			//Swallow the input
 			[sprite ccTouchesBegan:touches withEvent:event];
-            NSLog(@"got spirte\n");
-
 			return;
 		}
 	}
@@ -186,12 +211,11 @@ static ccColor3B colors[] = {
 	UITouch *touch = [touches anyObject];
 	CGPoint point = [touch locationInView: [touch view]];
 	point = [[CCDirector sharedDirector] convertToGL: point];
-	
+
 	//Process input for all sprites
 	for(id sprite in sprites){
-		if(pointIsInRect(point, [sprite rect])){
-			[sprite ccTouchesMoved:touches withEvent:event];
-		}
+        [sprite ccTouchesMoved:touches withEvent:event];
+
 	}
 }
 -(void) ccTouchesEnded:(NSSet *)touches withEvent:(UIEvent *)event {

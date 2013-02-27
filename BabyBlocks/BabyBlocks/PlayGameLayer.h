@@ -26,5 +26,7 @@
 -(void) quit:(id)sender;
 -(void) initColorBox;
 -(void) drawGridWithOffset:(int)offset;
+-(void) loadLayout;
+-(void) drawColoredSpriteAt:(CGPoint)position withRect:(CGRect)rect withColor:(ccColor3B)color withZ:(float)z;
 
 @end

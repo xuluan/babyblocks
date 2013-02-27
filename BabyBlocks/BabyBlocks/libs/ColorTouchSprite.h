@@ -1,12 +1,5 @@
 #import "cocos2d.h"
 
-enum {
-	TS_NONE,
-	TS_TAP,
-	TS_HOLD,
-	TS_DRAG
-};
-
 
 bool pointIsInRect(CGPoint p, CGRect r){
 	bool isInRect = false;
@@ -20,24 +13,19 @@ bool pointIsInRect(CGPoint p, CGRect r){
 	return isInRect;
 }
 
-float distanceBetweenPoints(CGPoint p1, CGPoint p2){
-	return sqrt( pow( (p1.x-p2.x) ,2) + pow( (p1.y-p2.y) ,2) );
+float qDistance(CGPoint p1, CGPoint p2){
+	return abs(p1.x-p2.x) + abs(p1.y-p2.y);
 }
 
 @interface ColorTouchSprite : CCSprite
 {
-	@public
-		int holdTime;				//How long have we held down on this?
-		int touchedState;			//Current touched state
-		bool isTouched;				//Are we touching this currently?
-		int lastMoved;				//How long has it been since we moved this?
-		CGPoint lastTouchedPoint;	//Where did we last touch?
+    bool isTouched;				//Are we touching this currently?
+    
 }
 
 @property (readwrite, assign) int touchedState;
 
 -(id) init;
--(void) step;
 -(CGRect) rect;
 -(void) ccTouchesBegan:(NSSet *)touches withEvent:(UIEvent *)event;
 -(void) ccTouchesMoved:(NSSet *)touches withEvent:(UIEvent *)event;
@@ -51,36 +39,13 @@ float distanceBetweenPoints(CGPoint p1, CGPoint p2){
 @synthesize touchedState;
 
 -(id) init {
-	holdTime = 0;
-	lastMoved = 0;
-	touchedState = TS_NONE;
-	isTouched = NO;
-	lastTouchedPoint = ccp(0,0);
+    isTouched = NO;
 	
-	[self schedule:@selector(step)];
+	//[self schedule:@selector(step)];
 	
 	return [super init];
 }
 
--(void) step {
-	/*
-	//We use holdTime to determine the difference between a tap and a hold
-	if(isTouched){
-		holdTime += 1;
-		lastMoved += 1;
-	}else{
-		holdTime += 1;
-		if(holdTime > 60){
-			touchedState = TS_NONE;
-		}
-	}
-	
-	//If you are holding and you haven't moved in a while change the state
-	if(holdTime > 10 && isTouched && lastMoved > 30){
-		touchedState = TS_HOLD;
-	}
-	*/
-}
 
 - (CGRect) rect {
 	float scaleMod = 1.0f;
@@ -96,27 +61,17 @@ float distanceBetweenPoints(CGPoint p1, CGPoint p2){
 	UITouch *touch = [touches anyObject];
     CGPoint point = [touch locationInView: [touch view]];
 	point = [[CCDirector sharedDirector] convertToGL: point];
+    isTouched = YES;
 	
-	isTouched = YES;
-	holdTime = 0;
-	touchedState = TS_NONE;
-	
-	lastTouchedPoint = point;
 }
 -(void) ccTouchesMoved:(NSSet *)touches withEvent:(UIEvent *)event {	
 	if(!isTouched){ return; }
 	
 	UITouch *touch = [touches anyObject];
     CGPoint point = [touch locationInView: [touch view]];
-	point = [[CCDirector sharedDirector] convertToGL: point];
-		
-	//We have a drag threshold of 3 pixels.
-	if(touchedState == TS_DRAG || distanceBetweenPoints(lastTouchedPoint, point) > 3){
-		touchedState = TS_DRAG;
-		self.position = point;
-		lastMoved = 0;
-	}
-	lastTouchedPoint = point;
+	point = [[CCDirector sharedDirector] convertToGL: point];		
+
+    self.position = point;
 }
 -(void) ccTouchesEnded:(NSSet *)touches withEvent:(UIEvent *)event {	
 	if(!isTouched){ return; }
@@ -124,15 +79,10 @@ float distanceBetweenPoints(CGPoint p1, CGPoint p2){
 	UITouch *touch = [touches anyObject];
     CGPoint point = [touch locationInView: [touch view]];
 	point = [[CCDirector sharedDirector] convertToGL: point];
+    self.position = point;
+    isTouched = NO;
 
-	//A short hold time after a touch ended means a tap.
-	if(holdTime < 10){
-		touchedState = TS_TAP;
-	}
-	holdTime = 0;
-	isTouched = NO;
-	
-	lastTouchedPoint = point;
+
 }
 
 @end

@@ -15,7 +15,6 @@
 		A98873E016DD9C0A00478258 /* layout.json in Resources */ = {isa = PBXBuildFile; fileRef = A98873DF16DD9C0A00478258 /* layout.json */; };
 		A98873E516DDC22100478258 /* grid40.png in Resources */ = {isa = PBXBuildFile; fileRef = A98873E316DDC22100478258 /* grid40.png */; };
 		A98873E616DDC22100478258 /* grid75.png in Resources */ = {isa = PBXBuildFile; fileRef = A98873E416DDC22100478258 /* grid75.png */; };
-		A98873E816DDD18D00478258 /* bg.png in Resources */ = {isa = PBXBuildFile; fileRef = A98873E716DDD18D00478258 /* bg.png */; };
 		A991E04916D928F0002C9F54 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = A991E04816D928F0002C9F54 /* Default-568h@2x.png */; };
 		A99A87FB16D8A90600C29688 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A99A87FA16D8A90600C29688 /* QuartzCore.framework */; };
 		A99A87FD16D8A90600C29688 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A99A87FC16D8A90600C29688 /* OpenGLES.framework */; };
@@ -146,7 +145,6 @@
 		A98873E216DDC07100478258 /* ColorTouchSprite.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ColorTouchSprite.h; path = libs/ColorTouchSprite.h; sourceTree = "<group>"; };
 		A98873E316DDC22100478258 /* grid40.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = grid40.png; path = Resources/grid40.png; sourceTree = "<group>"; };
 		A98873E416DDC22100478258 /* grid75.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = grid75.png; path = Resources/grid75.png; sourceTree = "<group>"; };
-		A98873E716DDD18D00478258 /* bg.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = bg.png; path = Resources/bg.png; sourceTree = "<group>"; };
 		A991E04816D928F0002C9F54 /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
 		A99A87F716D8A90600C29688 /* BabyBlocks.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BabyBlocks.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A99A87FA16D8A90600C29688 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
@@ -460,7 +458,6 @@
 		A99A880B16D8A90600C29688 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				A98873E716DDD18D00478258 /* bg.png */,
 				A98873E316DDC22100478258 /* grid40.png */,
 				A98873E416DDC22100478258 /* grid75.png */,
 				A98873DF16DD9C0A00478258 /* layout.json */,
@@ -857,7 +854,6 @@
 				A98873E016DD9C0A00478258 /* layout.json in Resources */,
 				A98873E516DDC22100478258 /* grid40.png in Resources */,
 				A98873E616DDC22100478258 /* grid75.png in Resources */,
-				A98873E816DDD18D00478258 /* bg.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

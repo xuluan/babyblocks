@@ -83,8 +83,13 @@ enum {
 	// in case you have something to dealloc, do it in this method
 	// in this particular example nothing needs to be released.
 	// cocos2d will automatically release all the children (Label)
+    [mainMenu release];
+    [sizeToChoose release];
 	
+    [self removeAllChildrenWithCleanup:YES];
+
 	// don't forget to call "super dealloc"
+    
 	[super dealloc];
 }
 
