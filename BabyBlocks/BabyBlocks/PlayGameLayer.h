@@ -11,7 +11,9 @@
 
 @interface PlayGameLayer : CCLayer
 {
-    NSMutableArray *sprites;
+    NSMutableArray *stBlocks;
+    NSMutableArray *dyBlocks;
+
     int currentSize;
     int currentMode;
     int currentLevel;

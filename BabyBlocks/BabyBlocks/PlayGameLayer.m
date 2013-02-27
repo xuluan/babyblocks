@@ -113,17 +113,18 @@ static ccColor3B colors[] = {
 }
 
 -(void) initColorBox {
-	sprites = [[NSMutableArray alloc] init];
+	stBlocks = [[NSMutableArray alloc] init];
+    dyBlocks = [[NSMutableArray alloc] init];
     CGSize size = [[CCDirector sharedDirector] winSize];
     
     for(int x=0; x<5; x++){
-		ColorTouchSprite *sprite = [ColorTouchSprite spriteWithFile:@"blank.png"];
+		StaticSprite *sprite = [StaticSprite spriteWithFile:@"blank.png"];
         
 		sprite.position = ccp(x*100+300, size.height-75);
 		[sprite setTextureRect:CGRectMake(0,0,75,75)];
 		sprite.color = colors[x];
 		[self addChild:sprite z:Z_BLOCK];
-		[sprites addObject:sprite];
+		[stBlocks addObject:sprite];
 	}
 }
 
@@ -183,7 +184,8 @@ static ccColor3B colors[] = {
 	// in case you have something to dealloc, do it in this method
 	// in this particular example nothing needs to be released.
 	// cocos2d will automatically release all the children (Label)
-    [sprites release];
+    [stBlocks release];
+    [dyBlocks release];
     [currentLayout release];
 	
     [self removeAllChildrenWithCleanup:YES];
@@ -192,6 +194,15 @@ static ccColor3B colors[] = {
     
 	[super dealloc];
 }
+-(void) createDyblock: (StaticSprite *)block {
+    ColorTouchSprite *sprite = [ColorTouchSprite spriteWithFile:@"blank.png"];
+    
+    sprite.position = [block position];
+    [sprite setTextureRect:CGRectMake(0,0,75,75)];
+    sprite.color = [block color];
+    [self addChild:sprite z:Z_BLOCK_MOVING];
+    [dyBlocks addObject:sprite];
+}
 
 /* Process touch events */
 -(void) ccTouchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
@@ -199,10 +210,15 @@ static ccColor3B colors[] = {
 	CGPoint point = [touch locationInView: [touch view]];
 	point = [[CCDirector sharedDirector] convertToGL: point];
 	//Process input for all sprites
-	for(id sprite in sprites){
+	for(id sprite in stBlocks){
 		if(pointIsInRect(point, [sprite rect])){
-			//Swallow the input
-			[sprite ccTouchesBegan:touches withEvent:event];
+            [self createDyblock:sprite];
+			return;
+		}
+	}
+	for(id sprite in dyBlocks){
+		if(pointIsInRect(point, [sprite rect])){
+            [sprite ccTouchesBegan:touches withEvent:event];
 			return;
 		}
 	}
@@ -213,9 +229,11 @@ static ccColor3B colors[] = {
 	point = [[CCDirector sharedDirector] convertToGL: point];
 
 	//Process input for all sprites
-	for(id sprite in sprites){
-        [sprite ccTouchesMoved:touches withEvent:event];
-
+	for(id sprite in dyBlocks){
+        if([sprite isTouchedState]) {
+          [sprite ccTouchesMoved:touches withEvent:event];
+            // show shadow
+        }
 	}
 }
 -(void) ccTouchesEnded:(NSSet *)touches withEvent:(UIEvent *)event {
@@ -224,9 +242,18 @@ static ccColor3B colors[] = {
 	point = [[CCDirector sharedDirector] convertToGL: point];
 	
 	//Process input for all sprites
-	for(id sprite in sprites){
-		//End all input when you lift up your finger
-		[sprite ccTouchesEnded:touches withEvent:event];
+	for(id sprite in dyBlocks){
+        if([sprite isTouchedState]) {
+		   [sprite ccTouchesEnded:touches withEvent:event];
+            /*
+            //if(in)
+              show drop animate
+              update data
+               win?
+             else
+               dispear animate
+             */
+        }
 	}
 }
 
