@@ -14,7 +14,6 @@
     CCMenu *mainMenu;
   	CCMenu *sizeToChoose;
     int currentSize;
-  
 }
 
 

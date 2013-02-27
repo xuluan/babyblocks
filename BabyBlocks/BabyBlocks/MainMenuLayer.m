@@ -7,6 +7,22 @@
 //
 
 #import "MainMenuLayer.h"
+#import "PlayGameLayer.h"
+
+
+enum {
+	TAG_RECIPE = 0,
+	TAG_RECIPE_NAME = 1,
+	TAG_NEXT_BUTTON = 2,
+	TAG_PREV_BUTTON = 3,
+	TAG_BG = 4
+};
+
+enum {
+	Z_BG = 0,
+	Z_RECIPE = 1,
+	Z_HUD = 2
+};
 
 @implementation MainMenuLayer
 
@@ -35,7 +51,7 @@
         CCMenuItemFont* startGameMIF = [CCMenuItemFont itemFromString:@"START GAME" target:self selector:@selector(startGame)];
         CCMenuItemFont* sizeMIF = [CCMenuItemFont itemFromString:@"SIZE" target:self selector:@selector(showSetSize)];
         CCMenuItemFont* modeMIF = [CCMenuItemFont itemFromString:@"MODE" target:self selector:@selector(startGame)];
-        CCMenuItemFont* exitMIF = [CCMenuItemFont itemFromString:@"EXIT" target:self selector:@selector(startGame)];
+        CCMenuItemFont* exitMIF = [CCMenuItemFont itemFromString:@"EXIT" target:self selector:@selector(exit)];
         
         mainMenu = [CCMenu menuWithItems:startGameMIF, sizeMIF, modeMIF, exitMIF, nil];
         [mainMenu alignItemsVertically];
@@ -45,6 +61,8 @@
 		mainMenu.position = center;
         [self addChild:mainMenu z:1];
         
+        currentSize = 7; //default size = 10 * 10
+        
         CCMenuItemFont* size3 = [CCMenuItemFont itemFromString:@"3 X 3" target:self selector:@selector(setSize3)];
         CCMenuItemFont* size7 = [CCMenuItemFont itemFromString:@"7 X 7" target:self selector:@selector(setSize7)];
         CCMenuItemFont* size10 = [CCMenuItemFont itemFromString:@"10 X 10" target:self selector:@selector(setSize10)];
@@ -53,13 +71,29 @@
         sizeToChoose.position = center;
         sizeToChoose.visible = NO;
         [self addChild:sizeToChoose z:1];
+        //[self schedule:@selector(step:)];
+
 	}
 	return self;
 }
 
-- startGame
+// on "dealloc" you need to release all your retained objects
+- (void) dealloc
 {
-    NSLog(@" HERE \n ");
+	// in case you have something to dealloc, do it in this method
+	// in this particular example nothing needs to be released.
+	// cocos2d will automatically release all the children (Label)
+	
+	// don't forget to call "super dealloc"
+	[super dealloc];
+}
+
+
+-(void) startGame
+{
+    int level = 0;
+    int mode = 0;
+    [[CCDirector sharedDirector] pushScene:[PlayGameLayer sceneWithLevel:level withMode:mode withSize:currentSize]];
 }
 
 -(void) showSetSize {
@@ -79,15 +113,27 @@
 -(void) setSize7 { [self setSize:7]; }
 -(void) setSize10 { [self setSize:10]; }
 
-// on "dealloc" you need to release all your retained objects
-- (void) dealloc
-{
-	// in case you have something to dealloc, do it in this method
-	// in this particular example nothing needs to be released.
-	// cocos2d will automatically release all the children (Label)
-	
-	// don't forget to call "super dealloc"
-	[super dealloc];
+-(void) exit {
+    exit(0);
 }
+/*
+-(void)showExit {
+	UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Do You Like Exit?" message:@"" delegate:self cancelButtonTitle:@"Cancel" otherButtonTitles:@"Yes",nil];
+    
+	[alert show];
+	[alert release];
+}
+
+//AlertView callback
+-(void)alertView:(UIAlertView *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex {
+	if(buttonIndex == 0) {
+        NSLog(@"cancel");
+ 	}else {
+        
+		exit(0);
+	}
+}
+*/
+
 @end
 

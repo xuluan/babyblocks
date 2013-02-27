@@ -1,0 +1,9 @@
+{ 
+
+	"3": { "cell_pic":"grid75.png", "offset_x":"150", "offset_y":"150", "interval":"75" },
+
+    "7": { "cell_pic":"grid50.png", "offset_x":"75", "offset_y":"75", "interval":"50" },
+ 
+    "10": { "cell_pic":"grid40.png", "offset_x":"50", "offset_y":"50", "interval":"40" }
+   
+}
