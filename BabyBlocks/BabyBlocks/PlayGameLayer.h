@@ -17,6 +17,13 @@
     int currentSize;
     int currentMode;
     int currentLevel;
+
+    int cellSize;
+    int offsetX;
+    int offsetY;
+    CGRect padRect;
+
+
     NSDictionary *currentLayout;
     
 }

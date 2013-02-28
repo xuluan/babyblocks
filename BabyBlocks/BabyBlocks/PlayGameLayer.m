@@ -16,6 +16,7 @@ enum {
 	Z_BG = -1,
 	Z_LAYER = 0,
 	Z_ICON = 2,
+	Z_SHADOW = 3,
 	Z_BLOCK = 5,
 	Z_BLOCK_MOVING = 10
 };
@@ -98,6 +99,13 @@ static ccColor3B colors[] = {
     int offset_x = [[currentLayout objectForKey:@"offset_x"] intValue];
     int offset_y = [[currentLayout objectForKey:@"offset_y"] intValue];
     int interval = [[currentLayout objectForKey:@"interval"] intValue];
+
+    if(offset > 0) {
+	    offsetX = offset + offset_x;
+	    cellSize = interval;
+	    offsetY = offset_y;
+	    CGRectMake(offsetX, offsetY, cellSize * currentSize, cellSize * currentSize);
+    }
 
 	for(int x=0; x<currentSize; x++){
 		for(int y=0; y<currentSize; y++){
@@ -204,6 +212,13 @@ static ccColor3B colors[] = {
     [dyBlocks addObject:sprite];
 }
 
+
+- (CGRect) destRect: (CGPoint) point {
+	int x = (point.x - offsetX)/cellSize;
+	int y = (point.y - offsetY)/cellSize;
+	return CGRectMake(offsetX+x*cellSize,offsetY+y*cellSize, offsetX+(x+1)*cellSize-1, offsetY+(y+1)*cellSize-1);
+}
+
 /* Process touch events */
 -(void) ccTouchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
 	UITouch *touch = [touches anyObject];
@@ -223,6 +238,7 @@ static ccColor3B colors[] = {
 		}
 	}
 }
+
 -(void) ccTouchesMoved:(NSSet *)touches withEvent:(UIEvent *)event {
 	UITouch *touch = [touches anyObject];
 	CGPoint point = [touch locationInView: [touch view]];
@@ -233,9 +249,15 @@ static ccColor3B colors[] = {
         if([sprite isTouchedState]) {
           [sprite ccTouchesMoved:touches withEvent:event];
             // show shadow
+          if(pointIsInRect(point, padRect)){
+          	CGRect rect = [self destRect:point];
+          	//draw rect
+   	        [self drawColoredSpriteAt:ccp(0,0) withRect:rect withColor:ccc3(127, 127, 127) withZ:Z_SHADOW];
+          }
         }
 	}
 }
+
 -(void) ccTouchesEnded:(NSSet *)touches withEvent:(UIEvent *)event {
 	UITouch *touch = [touches anyObject];
 	CGPoint point = [touch locationInView: [touch view]];
@@ -245,14 +267,16 @@ static ccColor3B colors[] = {
 	for(id sprite in dyBlocks){
         if([sprite isTouchedState]) {
 		   [sprite ccTouchesEnded:touches withEvent:event];
-            /*
-            //if(in)
-              show drop animate
-              update data
-               win?
-             else
-               dispear animate
-             */
+          if(pointIsInRect(point, padRect)){
+          	CGRect rect = [self destRect:point];
+          	  //show drop animate
+              //update data
+              // win?
+          } else {
+          	//   dispear animate
+          }
+             
+             
         }
 	}
 }
