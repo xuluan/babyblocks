@@ -52,6 +52,7 @@ static ccColor3B colors[] = {
 
 	if( (self=[super init] )) {
         self.isTouchEnabled = YES;
+        movingBlock = nil;
         [self loadLayout];
 
         
@@ -202,14 +203,18 @@ static ccColor3B colors[] = {
     
 	[super dealloc];
 }
--(void) createDyblock: (StaticSprite *)block {
-    ColorTouchSprite *sprite = [ColorTouchSprite spriteWithFile:@"blank.png"];
+-(void) createMovingBlock: (StaticSprite *)block {
+    if(movingBlock){ 
+    	NSLog("assert(false)!!!");
+    	return; 
+    }
+
+    movingBlock = [ColorTouchSprite spriteWithFile:@"blank.png"];
     
-    sprite.position = [block position];
-    [sprite setTextureRect:CGRectMake(0,0,75,75)];
-    sprite.color = [block color];
-    [self addChild:sprite z:Z_BLOCK_MOVING];
-    [dyBlocks addObject:sprite];
+    movingBlock.position = [block position];
+    [movingBlock setTextureRect:CGRectMake(0,0,75,75)];
+    movingBlock.color = [block color];
+    [self addChild:movingBlock z:Z_BLOCK_MOVING];
 }
 
 
@@ -221,19 +226,24 @@ static ccColor3B colors[] = {
 
 /* Process touch events */
 -(void) ccTouchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
+	if(movingBlock){ return; }
+
 	UITouch *touch = [touches anyObject];
 	CGPoint point = [touch locationInView: [touch view]];
 	point = [[CCDirector sharedDirector] convertToGL: point];
 	//Process input for all sprites
 	for(id sprite in stBlocks){
 		if(pointIsInRect(point, [sprite rect])){
-            [self createDyblock:sprite];
+            [self createMovingBlock:sprite];
 			return;
 		}
 	}
+
 	for(id sprite in dyBlocks){
 		if(pointIsInRect(point, [sprite rect])){
-            [sprite ccTouchesBegan:touches withEvent:event];
+            [self createDyblock:sprite];
+            [sprite release];
+            [dyBlocks removeObject:sprite];
 			return;
 		}
 	}
@@ -245,17 +255,15 @@ static ccColor3B colors[] = {
 	point = [[CCDirector sharedDirector] convertToGL: point];
 
 	//Process input for all sprites
-	for(id sprite in dyBlocks){
-        if([sprite isTouchedState]) {
-          [sprite ccTouchesMoved:touches withEvent:event];
-            // show shadow
-          if(pointIsInRect(point, padRect)){
-          	CGRect rect = [self destRect:point];
-          	//draw rect
-   	        [self drawColoredSpriteAt:ccp(0,0) withRect:rect withColor:ccc3(127, 127, 127) withZ:Z_SHADOW];
-          }
-        }
-	}
+    if([movingBlock isTouchedState]) {
+      [movingBlock ccTouchesMoved:touches withEvent:event];
+        // show shadow
+      if(pointIsInRect(point, padRect)){
+        CGRect rect = [self destRect:point];
+      	//draw rect
+	    [self drawColoredSpriteAt:ccp(0,0) withRect:rect withColor:ccc3(127, 127, 127) withZ:Z_SHADOW];
+      }
+    }
 }
 
 -(void) ccTouchesEnded:(NSSet *)touches withEvent:(UIEvent *)event {
@@ -264,21 +272,17 @@ static ccColor3B colors[] = {
 	point = [[CCDirector sharedDirector] convertToGL: point];
 	
 	//Process input for all sprites
-	for(id sprite in dyBlocks){
-        if([sprite isTouchedState]) {
-		   [sprite ccTouchesEnded:touches withEvent:event];
-          if(pointIsInRect(point, padRect)){
-          	CGRect rect = [self destRect:point];
-          	  //show drop animate
-              //update data
-              // win?
-          } else {
-          	//   dispear animate
-          }
-             
-             
-        }
-	}
+    if([movingBlock isTouchedState]) {
+	   [movingBlock ccTouchesEnded:touches withEvent:event];
+      if(pointIsInRect(point, padRect)){
+      	CGRect rect = [self destRect:point];
+      	  // show drop animate
+          // update data
+          // win?
+      } else {
+      	  //   dispear animate
+      }
+    }
 }
 
 @end

@@ -13,6 +13,7 @@
 {
     NSMutableArray *stBlocks;
     NSMutableArray *dyBlocks;
+    ColorTouchSprite *movingBlock;
 
     int currentSize;
     int currentMode;
