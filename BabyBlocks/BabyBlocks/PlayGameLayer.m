@@ -16,15 +16,15 @@ enum {
 	Z_BG = -1,
 	Z_LAYER = 0,
 	Z_ICON = 2,
-	Z_SHADOW = 3,
 	Z_BLOCK = 5,
+	Z_SHADOW = 8,
 	Z_BLOCK_MOVING = 10
 };
 
 static ccColor3B colors[] = {
 	{255,0,0},   // red
     {255,255,0}, // yellow
-    {0, 255,0},  // green
+    {0,255,0},  // green
     {0,0,255},   //blue
     {255,127,0}  //orange
     
@@ -63,21 +63,17 @@ static ccColor3B colors[] = {
         //draw color box
         [self initColorBox];
 
-		//Load our level
-		//[self loadLevel:str];
+        [self drawGridWithOffset:(sz.width/2)];
+        [self drawGridWithOffset:(0)];
         
+		//Load our level
+		[self loadLevel];
 
-		
 		//Quit button
 		CCMenuItemFont *quitItem = [CCMenuItemFont itemFromString:@"Quit" target:self selector:@selector(quit:)];
 		CCMenu *menu = [CCMenu menuWithItems: quitItem, nil];
 		menu.position = ccp(100, sz.height - 75);
 		[self addChild:menu z:Z_ICON];
-
-    [self drawGridWithOffset:(sz.width/2)];
-    [self drawGridWithOffset:(0)];
-
-    
 	}
 	return self;
 }
@@ -103,9 +99,10 @@ static ccColor3B colors[] = {
 
     if(offset > 0) {
 	    offsetX = offset + offset_x;
+        offsetX2 = offset_x;
 	    cellSize = interval;
 	    offsetY = offset_y;
-	    CGRectMake(offsetX, offsetY, cellSize * currentSize, cellSize * currentSize);
+	    padRect = CGRectMake(offsetX, offsetY, cellSize * currentSize, cellSize * currentSize);
     }
 
 	for(int x=0; x<currentSize; x++){
@@ -122,18 +119,18 @@ static ccColor3B colors[] = {
 }
 
 -(void) initColorBox {
-	stBlocks = [[NSMutableArray alloc] init];
-    dyBlocks = [[NSMutableArray alloc] init];
+	newBlocks = [[NSMutableArray alloc] init];
+    oldBlocks = [[NSMutableArray alloc] init];
     CGSize size = [[CCDirector sharedDirector] winSize];
     
     for(int x=0; x<5; x++){
 		StaticSprite *sprite = [StaticSprite spriteWithFile:@"blank.png"];
         
 		sprite.position = ccp(x*100+300, size.height-75);
-		[sprite setTextureRect:CGRectMake(0,0,75,75)];
+		[sprite setTextureRect:CGRectMake(0,0,cellSize,cellSize)];
 		sprite.color = colors[x];
 		[self addChild:sprite z:Z_BLOCK];
-		[stBlocks addObject:sprite];
+		[newBlocks addObject:sprite];
 	}
 }
 
@@ -148,43 +145,40 @@ static ccColor3B colors[] = {
 	NSDictionary *dict = [[CJSONDeserializer deserializer] deserializeAsDictionary:jsonData error:nil];
     NSString *usingSize = [NSString stringWithFormat:@"%d",currentSize];
 	currentLayout = [dict objectForKey:usingSize];
+    cellSize = [[currentLayout objectForKey:@"interval"] intValue];
 
 }
 
-/*
+-(void)drawMap:(id)node
+{
+    int x = [[node objectForKey:@"x"] intValue];
+    int y = [[node objectForKey:@"y"] intValue];
+    int c = [[node objectForKey:@"c"] intValue];
+    
+    CCSprite *sprite = [CCSprite spriteWithFile:@"blank.png"];
+    sprite.position = ccp(offsetX2+x*cellSize, offsetY+y*cellSize);
+    [sprite setTextureRect:CGRectMake(0,0,cellSize,cellSize)];
+    sprite.color = colors[c];
+    [self addChild:sprite z:Z_BLOCK];
+
+
+}
 
 //Load level file and process sprites
--(void) loadLevel:(NSString*)str {
+-(void) loadLevel
+{
+    NSString *str = [NSString stringWithFormat:@"%d_%d.json", currentSize,currentLevel];
 	NSString *jsonString = [[NSString alloc] initWithContentsOfFile:getActualPath(str) encoding:NSUTF8StringEncoding error:nil];
 	NSData *jsonData = [jsonString dataUsingEncoding:NSUTF32BigEndianStringEncoding];
 	NSDictionary *dict = [[CJSONDeserializer deserializer] deserializeAsDictionary:jsonData error:nil];
     
-	NSArray *nodes = [dict objectForKey:@"nodes"];
-	for (id node in nodes) {
-		if([[node objectForKey:@"type"] isEqualToString:@"spriteFile"]){
-			[self processSpriteFile:node];
-		}
+	NSArray *map = [dict objectForKey:@"map"];
+
+	for (id node in map) {
+        [self drawMap:node];
 	}
 }
 
--(void) processSpriteFile:(NSDictionary*)node {
-	//Init the sprite
-	NSString *file = [node objectForKey:@"file"];
-	CCSprite *sprite = [CCSprite spriteWithFile:file];
-	
-	//Set sprite position
-	sprite.position = ccp(arc4random()%480, arc4random()%200);
-	
-	//Each numeric value is an NSString or NSNumber that must be cast into a float
-	sprite.scale = [[node objectForKey:@"scale"] floatValue];
-	
-	//Set the anchor point so objects are positioned from the bottom-up
-	sprite.anchorPoint = ccp(0.5,0);
-    
-	//Finally, add the sprite
-	[self addChild:sprite z:2];
-}
- */
 
 
 // on "dealloc" you need to release all your retained objects
@@ -193,9 +187,10 @@ static ccColor3B colors[] = {
 	// in case you have something to dealloc, do it in this method
 	// in this particular example nothing needs to be released.
 	// cocos2d will automatically release all the children (Label)
-    [stBlocks release];
-    [dyBlocks release];
+    [newBlocks release];
+    [oldBlocks release];
     [currentLayout release];
+    [movingBlock release];
 	
     [self removeAllChildrenWithCleanup:YES];
     
@@ -212,14 +207,27 @@ static ccColor3B colors[] = {
     movingBlock = [ColorTouchSprite spriteWithFile:@"blank.png"];
     
     movingBlock.position = [block position];
-    [movingBlock setTextureRect:CGRectMake(0,0,75,75)];
+    [movingBlock setTextureRect:CGRectMake(0,0,cellSize,cellSize)];
     movingBlock.color = [block color];
     [self addChild:movingBlock z:Z_BLOCK_MOVING];
 }
 
+-(void) createOldBlock:(CGRect)rect
+{
+
+    StaticSprite *sprite = [ColorTouchSprite spriteWithFile:@"blank.png"];
+    
+    sprite.position = rect.origin;
+    [sprite setTextureRect:CGRectMake(0,0,cellSize,cellSize)];
+    sprite.color = [movingBlock color];
+    [self addChild:sprite z:Z_BLOCK_MOVING];
+    [oldBlocks addObject:sprite];
+    [self removeChild:movingBlock cleanup:true];
+    movingBlock = nil;
+}
 
 - (CGRect) destRect: (CGPoint) point {
-	int x = (point.x - offsetX)/cellSize;
+	int x = (point.x + cellSize/2 - offsetX)/cellSize;
 	int y = (point.y - offsetY)/cellSize;
 	return CGRectMake(offsetX+x*cellSize,offsetY+y*cellSize, offsetX+(x+1)*cellSize-1, offsetY+(y+1)*cellSize-1);
 }
@@ -232,18 +240,18 @@ static ccColor3B colors[] = {
 	CGPoint point = [touch locationInView: [touch view]];
 	point = [[CCDirector sharedDirector] convertToGL: point];
 	//Process input for all sprites
-	for(id sprite in stBlocks){
+	for(id sprite in newBlocks){
 		if(pointIsInRect(point, [sprite rect])){
             [self createMovingBlock:sprite];
 			return;
 		}
 	}
 
-	for(id sprite in dyBlocks){
+	for(id sprite in oldBlocks){
 		if(pointIsInRect(point, [sprite rect])){
-            [self createDyblock:sprite];
-            [sprite release];
-            [dyBlocks removeObject:sprite];
+            [self createMovingBlock:sprite];
+            [self removeChild:sprite cleanup:true];
+            [oldBlocks removeObject:sprite];
 			return;
 		}
 	}
@@ -261,7 +269,7 @@ static ccColor3B colors[] = {
       if(pointIsInRect(point, padRect)){
         CGRect rect = [self destRect:point];
       	//draw rect
-	    [self drawColoredSpriteAt:ccp(0,0) withRect:rect withColor:ccc3(127, 127, 127) withZ:Z_SHADOW];
+	    //[self drawColoredSpriteAt:ccp(0,0) withRect:rect withColor:ccc3(127, 127, 127) withZ:Z_SHADOW];
       }
     }
 }
@@ -276,11 +284,14 @@ static ccColor3B colors[] = {
 	   [movingBlock ccTouchesEnded:touches withEvent:event];
       if(pointIsInRect(point, padRect)){
       	CGRect rect = [self destRect:point];
+          [self createOldBlock:rect];
       	  // show drop animate
           // update data
           // win?
       } else {
-      	  //   dispear animate
+      	  //   dispear animatemovingBlock
+          [self removeChild:movingBlock cleanup:true];
+          movingBlock = nil;
       }
     }
 }

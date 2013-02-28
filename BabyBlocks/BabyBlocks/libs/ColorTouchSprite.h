@@ -40,6 +40,7 @@ float qDistance(CGPoint p1, CGPoint p2){
 @interface ColorTouchSprite : CCSprite
 {
     bool isTouched;				//Are we touching this currently?
+    CCSprite *shadow;
     
 }
 

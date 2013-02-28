@@ -11,9 +11,9 @@
 
 @interface PlayGameLayer : CCLayer
 {
-    NSMutableArray *stBlocks;
-    NSMutableArray *dyBlocks;
-    ColorTouchSprite *movingBlock;
+    NSMutableArray *newBlocks;
+    NSMutableArray *oldBlocks;
+    CCSprite *movingBlock;
 
     int currentSize;
     int currentMode;
@@ -22,6 +22,7 @@
     int cellSize;
     int offsetX;
     int offsetY;
+    int offsetX2;
     CGRect padRect;
 
 
@@ -31,7 +32,7 @@
 
 +(id) sceneWithLevel:(int)level withMode:(int)mode withSize:(int)size;
 -(id) initWithLevel:(int)level withMode:(int)mode withSize:(int)size;
-//-(void) loadLevel:(NSString*)str;
+-(void) loadLevel:(NSString*)str;
 //-(void) processSpriteFile:(NSDictionary*)node;
 -(void) quit:(id)sender;
 -(void) initColorBox;

@@ -7,6 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		A927FF6F16DF8C670016D7D3 /* 3_1.json in Resources */ = {isa = PBXBuildFile; fileRef = A927FF6C16DF8C660016D7D3 /* 3_1.json */; };
+		A927FF7016DF8C670016D7D3 /* 7_1.json in Resources */ = {isa = PBXBuildFile; fileRef = A927FF6D16DF8C660016D7D3 /* 7_1.json */; };
+		A927FF7116DF8C670016D7D3 /* 10_1.json in Resources */ = {isa = PBXBuildFile; fileRef = A927FF6E16DF8C670016D7D3 /* 10_1.json */; };
+		A927FF7516DF91360016D7D3 /* 3_0.json in Resources */ = {isa = PBXBuildFile; fileRef = A927FF7216DF91360016D7D3 /* 3_0.json */; };
+		A927FF7616DF91360016D7D3 /* 7_0.json in Resources */ = {isa = PBXBuildFile; fileRef = A927FF7316DF91360016D7D3 /* 7_0.json */; };
+		A927FF7716DF91360016D7D3 /* 10_0.json in Resources */ = {isa = PBXBuildFile; fileRef = A927FF7416DF91360016D7D3 /* 10_0.json */; };
 		A986412616DC564A00D0E69A /* MainMenuLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = A986412516DC564A00D0E69A /* MainMenuLayer.m */; };
 		A98872FB16DCBD0C00478258 /* PlayGameLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = A98872FA16DCBD0C00478258 /* PlayGameLayer.m */; };
 		A98873D716DCEB8600478258 /* blank.png in Resources */ = {isa = PBXBuildFile; fileRef = A98873D516DCEB8600478258 /* blank.png */; };
@@ -133,6 +139,12 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		A927FF6C16DF8C660016D7D3 /* 3_1.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = 3_1.json; path = data/3_1.json; sourceTree = "<group>"; };
+		A927FF6D16DF8C660016D7D3 /* 7_1.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = 7_1.json; path = data/7_1.json; sourceTree = "<group>"; };
+		A927FF6E16DF8C670016D7D3 /* 10_1.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = 10_1.json; path = data/10_1.json; sourceTree = "<group>"; };
+		A927FF7216DF91360016D7D3 /* 3_0.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = 3_0.json; path = data/3_0.json; sourceTree = "<group>"; };
+		A927FF7316DF91360016D7D3 /* 7_0.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = 7_0.json; path = data/7_0.json; sourceTree = "<group>"; };
+		A927FF7416DF91360016D7D3 /* 10_0.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = 10_0.json; path = data/10_0.json; sourceTree = "<group>"; };
 		A986412416DC564A00D0E69A /* MainMenuLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MainMenuLayer.h; sourceTree = "<group>"; };
 		A986412516DC564A00D0E69A /* MainMenuLayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MainMenuLayer.m; sourceTree = "<group>"; };
 		A98872F916DCBD0C00478258 /* PlayGameLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlayGameLayer.h; sourceTree = "<group>"; };
@@ -446,6 +458,12 @@
 				A986412516DC564A00D0E69A /* MainMenuLayer.m */,
 				A98872F916DCBD0C00478258 /* PlayGameLayer.h */,
 				A98872FA16DCBD0C00478258 /* PlayGameLayer.m */,
+				A927FF7216DF91360016D7D3 /* 3_0.json */,
+				A927FF7316DF91360016D7D3 /* 7_0.json */,
+				A927FF7416DF91360016D7D3 /* 10_0.json */,
+				A927FF6C16DF8C660016D7D3 /* 3_1.json */,
+				A927FF6D16DF8C660016D7D3 /* 7_1.json */,
+				A927FF6E16DF8C670016D7D3 /* 10_1.json */,
 				A98873E216DDC07100478258 /* ColorTouchSprite.h */,
 				A99A896516D8A90800C29688 /* GameConfig.h */,
 				A99A880B16D8A90600C29688 /* Resources */,
@@ -854,6 +872,12 @@
 				A98873E016DD9C0A00478258 /* layout.json in Resources */,
 				A98873E516DDC22100478258 /* grid40.png in Resources */,
 				A98873E616DDC22100478258 /* grid75.png in Resources */,
+				A927FF6F16DF8C670016D7D3 /* 3_1.json in Resources */,
+				A927FF7016DF8C670016D7D3 /* 7_1.json in Resources */,
+				A927FF7116DF8C670016D7D3 /* 10_1.json in Resources */,
+				A927FF7516DF91360016D7D3 /* 3_0.json in Resources */,
+				A927FF7616DF91360016D7D3 /* 7_0.json in Resources */,
+				A927FF7716DF91360016D7D3 /* 10_0.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
