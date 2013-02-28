@@ -26,8 +26,9 @@ static ccColor3B colors[] = {
     {255,255,0}, // yellow
     {0,255,0},  // green
     {0,0,255},   //blue
-    {255,127,0}  //orange
-    
+    {255,127,0},  //orange
+    {127,127,127}  //shadow
+   
 };
 
 
@@ -102,7 +103,7 @@ static ccColor3B colors[] = {
         offsetX2 = offset_x;
 	    cellSize = interval;
 	    offsetY = offset_y;
-	    padRect = CGRectMake(offsetX, offsetY, cellSize * currentSize, cellSize * currentSize);
+	    padRect = CGRectMake(offsetX - cellSize/2, offsetY, cellSize * currentSize, cellSize * currentSize);
     }
 
 	for(int x=0; x<currentSize; x++){
@@ -227,8 +228,9 @@ static ccColor3B colors[] = {
 }
 
 - (CGRect) destRect: (CGPoint) point {
-	int x = (point.x + cellSize/2 - offsetX)/cellSize;
-	int y = (point.y - offsetY)/cellSize;
+	int x = ((int)point.x + cellSize/2 - offsetX)/cellSize;
+	int y = ((int)point.y - offsetY)/cellSize;
+
 	return CGRectMake(offsetX+x*cellSize,offsetY+y*cellSize, offsetX+(x+1)*cellSize-1, offsetY+(y+1)*cellSize-1);
 }
 
@@ -257,6 +259,16 @@ static ccColor3B colors[] = {
 	}
 }
 
+-(void) addShadow:(CGPoint)point
+{
+    shadow = [CCSprite spriteWithFile:@"blank.png"];
+    shadow.position = ccp(0, 0);
+    [shadow setTextureRect:CGRectMake(0,0,cellSize,cellSize)];
+    shadow.color = colors[5];
+    shadow.position = point;
+    [self addChild:shadow z:Z_SHADOW tag:1000];
+}
+
 -(void) ccTouchesMoved:(NSSet *)touches withEvent:(UIEvent *)event {
 	UITouch *touch = [touches anyObject];
 	CGPoint point = [touch locationInView: [touch view]];
@@ -264,12 +276,16 @@ static ccColor3B colors[] = {
 
 	//Process input for all sprites
     if([movingBlock isTouchedState]) {
-      [movingBlock ccTouchesMoved:touches withEvent:event];
+        if([self getChildByTag:1000]){
+          [self removeChildByTag:1000 cleanup:YES];
+        }
+        [movingBlock ccTouchesMoved:touches withEvent:event];
         // show shadow
       if(pointIsInRect(point, padRect)){
         CGRect rect = [self destRect:point];
-      	//draw rect
-	    //[self drawColoredSpriteAt:ccp(0,0) withRect:rect withColor:ccc3(127, 127, 127) withZ:Z_SHADOW];
+          [self addShadow:rect.origin];
+      }else{
+          
       }
     }
 }

@@ -14,6 +14,7 @@
     NSMutableArray *newBlocks;
     NSMutableArray *oldBlocks;
     CCSprite *movingBlock;
+    CCSprite *shadow;
 
     int currentSize;
     int currentMode;

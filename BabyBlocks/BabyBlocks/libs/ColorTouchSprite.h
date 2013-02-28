@@ -40,7 +40,6 @@ float qDistance(CGPoint p1, CGPoint p2){
 @interface ColorTouchSprite : CCSprite
 {
     bool isTouched;				//Are we touching this currently?
-    CCSprite *shadow;
     
 }
 
@@ -64,12 +63,16 @@ float qDistance(CGPoint p1, CGPoint p2){
 		
 	return [super init];
 }
+
+- (void) dealloc
+{    
+	[super dealloc];
+}
+
 -(bool) isTouchedState
 {
     return isTouched;
 }
-
-
 
 - (CGRect) rect {
 	float scaleMod = 1.0f;
