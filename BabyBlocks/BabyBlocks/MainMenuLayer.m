@@ -108,7 +108,6 @@ enum {
 
 -(void) setSize:(int)n {
 	currentSize = n;
-    NSLog(@"currentSize = %d \n", currentSize);
 
 	mainMenu.visible = YES;
 	sizeToChoose.visible = NO;

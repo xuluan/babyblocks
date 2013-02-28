@@ -40,9 +40,7 @@
 }
 - (void) applicationDidFinishLaunching:(UIApplication*)application
 {
-	// Init the window
-    NSLog(@"RECT = %@ \n", NSStringFromCGRect([[UIScreen mainScreen] bounds]));
-    
+	// Init the window    
 	window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
 	
 	// Try to use CADisplayLink director
