@@ -256,7 +256,7 @@ static ccColor3B colors[] = {
     [self addChild:movingBlock z:Z_BLOCK_MOVING];
 }
 
--(void) createOldBlock:(CGRect)rect
+-(void) createUsedBlock:(CGRect)rect
 {
 
     StaticSprite *sprite = [ColorTouchSprite spriteWithFile:@"blank.png"];
@@ -383,7 +383,7 @@ static ccColor3B colors[] = {
           if(!overlap) {
               [self addMapNode:rect withColor:movingBlock.color];
               
-              [self createOldBlock:rect];
+              [self createUsedBlock:rect];
               
           } else {
               //animate

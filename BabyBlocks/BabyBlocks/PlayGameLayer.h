@@ -47,7 +47,7 @@
 -(bool) isWin;
 
 - (void) dealloc;
--(void) createOldBlock:(CGRect)rect;
+-(void) createUsedBlock:(CGRect)rect;
 - (CGRect) destRect: (CGPoint) point;
 -(void) addShadow:(CGPoint)point;
 -(void) ccTouchesBegan:(NSSet *)touches withEvent:(UIEvent *)event;
