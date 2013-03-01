@@ -44,13 +44,9 @@
 -(void) quit:(id)sender;
 -(void) drawIcon;
 -(void) drawBG;
-
--(void) removeMapNode:(StaticSprite *) block;
--(void) addMapNode:(StaticSprite *) block;
 -(bool) isWin;
 
 - (void) dealloc;
--(void) createMovingBlock: (StaticSprite *)block;
 -(void) createOldBlock:(CGRect)rect;
 - (CGRect) destRect: (CGPoint) point;
 -(void) addShadow:(CGPoint)point;

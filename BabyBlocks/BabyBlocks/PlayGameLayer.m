@@ -22,7 +22,7 @@ enum {
 };
 
 enum {
-    TAG_SHADOW = 1000;
+    TAG_SHADOW = 1000
 };
 
 static ccColor3B colors[] = {
@@ -87,13 +87,17 @@ static ccColor3B colors[] = {
 
 -(void)initMap
 {
-    NSString *pos = [NSString stringWithFormat:@"%d_%d", x,y];
 
-    currentMap = @{};
+    currentMap = [[NSMutableDictionary alloc] init];
 
     for(int x=0; x<currentSize; x++){
         for(int y=0; y<currentSize; y++){
-            currentMap[pos] = @{@"exp":nil, @"now":nil};
+            NSString *pos = [NSString stringWithFormat:@"%d_%d", x,y];
+            NSMutableDictionary *d = [[NSMutableDictionary alloc] init];
+            [d setValue:nil forKey:@"exp"];
+            [d setValue:nil forKey:@"now"];
+            [currentMap setValue:d forKey:pos];
+
         }
     }
 }
@@ -163,8 +167,11 @@ static ccColor3B colors[] = {
     [sprite setTextureRect:CGRectMake(0,0,cellSize,cellSize)];
     sprite.color = colors[c];
     [self addChild:sprite z:Z_BLOCK];
+    [[currentMap objectForKey:pos] setValue:[NSNumber numberWithInt:c] forKey:@"exp"];
+    
+    NSLog(@"init %@ %@ \n", pos, [[currentMap objectForKey:pos] objectForKey:@"exp"]);
 
-    currentMap[pos][@"exp"] = colors[c];
+    
 }
 
 -(void) loadLevel
@@ -188,6 +195,7 @@ static ccColor3B colors[] = {
 
 -(void) drawIcon
 {
+    CGSize sz = [[CCDirector sharedDirector] winSize];
     CCMenuItemFont *quitItem = [CCMenuItemFont itemFromString:@"Quit" target:self selector:@selector(quit:)];
     CCMenu *menu = [CCMenu menuWithItems: quitItem, nil];
     menu.position = ccp(100, sz.height - 75);
@@ -198,8 +206,8 @@ static ccColor3B colors[] = {
 {
     CGSize sz = [[CCDirector sharedDirector] winSize];
     CGPoint position = ccp(0,0);
-    GRect rect = CGRectMake(0,0,sz.width*2,sz.height*2);
-    ccColor3B color = ccc3(150,150,200)
+    CGRect rect = CGRectMake(0,0,sz.width*2,sz.height*2);
+    ccColor3B color = ccc3(150,150,200);
 
 	CCSprite *sprite = [CCSprite spriteWithFile:@"blank.png"];
 	[sprite setPosition:position];
@@ -225,17 +233,24 @@ static ccColor3B colors[] = {
 - (bool) isWin
 {
     for (NSString* key in currentMap) {
-        NSDictionary* node = currentMap[key];
-        if(node[@"exp"] != node[@"now"]) {
+        NSMutableDictionary* node = [currentMap objectForKey:key];
+        if([node objectForKey:@"exp"] != [node objectForKey:@"now"]) {
+            NSLog(@"X %@ %@ %@\n", key, [node objectForKey:@"now"], [node objectForKey:@"exp"]);
             return NO;
+        } else {
+            NSLog(@"V %@ %@ %@\n", key, [node objectForKey:@"now"], [node objectForKey:@"exp"]);
+
         }
+
     }
+    
+    NSLog(@"GOOD\n");
     return YES;
 }
 
 -(void) createMovingBlock: (StaticSprite *)block {
     if(movingBlock){ 
-    	NSLog("assert(false)!!!");
+    	NSLog(@"assert(false)!!!");
     	return; 
     }
 
@@ -278,24 +293,32 @@ static ccColor3B colors[] = {
     [self addChild:shadow z:Z_SHADOW tag:TAG_SHADOW];
 }
 
--(void) removeMapNode:(StaticSprite *) block
+-(void) removeMapNode:(CGRect) rect 
 {
-    CGRect rect = [block rect];
     int x = (rect.origin.x - offsetX) / cellSize;
     int y = (rect.origin.y - offsetY) / cellSize;
     NSString *pos = [NSString stringWithFormat:@"%d_%d", x,y];
-    currentMap[pos][@"now"] = nil;
+    [[currentMap objectForKey:pos] setValue:nil forKey:@"now"];
 
+    NSLog(@"rm %@ %@ \n", pos, [[currentMap objectForKey:pos] objectForKey:@"now"]);
 
 }
 
--(void) addMapNode:(StaticSprite *) block
+-(void) addMapNode:(CGRect) rect withColor:(ccColor3B)cc
 {
-    CGRect rect = [block rect];
     int x = (rect.origin.x - offsetX) / cellSize;
     int y = (rect.origin.y - offsetY) / cellSize;
     NSString *pos = [NSString stringWithFormat:@"%d_%d", x,y];
-    currentMap[pos][@"now"] = block.color;
+
+    for(int i = 0; i < 5; i++)
+    {
+        ccColor3B c = colors[i];
+        if(c.r == cc.r && c.g == cc.g && c.b == cc.b){
+            [[currentMap objectForKey:pos] setValue:[NSNumber numberWithInt:i] forKey:@"now"];
+            NSLog(@"now %@ %@ \n", pos, [[currentMap objectForKey:pos] objectForKey:@"now"]);
+
+        }
+    }
 }
 
 /* Process touch events */
@@ -316,7 +339,7 @@ static ccColor3B colors[] = {
 	for(id sprite in oldBlocks){
 		if(pointIsInRect(point, [sprite rect])){
             [self createMovingBlock:sprite];
-            [self removeMapNode:sprite];
+            [self removeMapNode:[self destRect:point]];
             [self removeChild:sprite cleanup:true];
             [oldBlocks removeObject:sprite];
 			return;
@@ -355,8 +378,9 @@ static ccColor3B colors[] = {
 	   [movingBlock ccTouchesEnded:touches withEvent:event];
       if(pointIsInRect(point, padRect)){
       	CGRect rect = [self destRect:point];
+          [self addMapNode:rect withColor:movingBlock.color];
+
           [self createOldBlock:rect];
-          [self removeMapNode:sprite];
 
       	  // show drop animate
           // update data
