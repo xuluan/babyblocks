@@ -6,13 +6,13 @@
 //
 //
 #import "cocos2d.h"
-
 #import "CCLayer.h"
+
 
 @interface PlayGameLayer : CCLayer
 {
-    NSMutableArray *newBlocks;
-    NSMutableArray *oldBlocks;
+    NSMutableArray *readyBlocks;
+    NSMutableArray *usedBlocks;
     CCSprite *movingBlock;
     CCSprite *shadow;
 

@@ -113,8 +113,8 @@ static ccColor3B colors[] = {
 }
 
 -(void) initReadyBox {
-    newBlocks = [[NSMutableArray alloc] init];
-    oldBlocks = [[NSMutableArray alloc] init];
+    readyBlocks = [[NSMutableArray alloc] init];
+    usedBlocks = [[NSMutableArray alloc] init];
     CGSize size = [[CCDirector sharedDirector] winSize];
     
     for(int x=0; x<5; x++){
@@ -124,7 +124,7 @@ static ccColor3B colors[] = {
         [sprite setTextureRect:CGRectMake(0,0,cellSize,cellSize)];
         sprite.color = colors[x];
         [self addChild:sprite z:Z_BLOCK];
-        [newBlocks addObject:sprite];
+        [readyBlocks addObject:sprite];
     }
 }
 
@@ -169,7 +169,6 @@ static ccColor3B colors[] = {
     [self addChild:sprite z:Z_BLOCK];
     [[currentMap objectForKey:pos] setValue:[NSNumber numberWithInt:c] forKey:@"exp"];
     
-    NSLog(@"init %@ %@ \n", pos, [[currentMap objectForKey:pos] objectForKey:@"exp"]);
 
     
 }
@@ -205,23 +204,21 @@ static ccColor3B colors[] = {
 -(void) drawBG
 {
     CGSize sz = [[CCDirector sharedDirector] winSize];
-    CGPoint position = ccp(0,0);
-    CGRect rect = CGRectMake(0,0,sz.width*2,sz.height*2);
-    ccColor3B color = ccc3(150,150,200);
 
-	CCSprite *sprite = [CCSprite spriteWithFile:@"blank.png"];
-	[sprite setPosition:position];
-	[sprite setTextureRect:rect];
-	[sprite setColor:color];
-	[self addChild:sprite];
-	
-	[self reorderChild:sprite z:Z_BG];
-}
+    CCSprite *sprite = [CCSprite spriteWithFile:@"blank.png"];
+    
+    sprite.position = ccp(sz.width/2, sz.height/2);
+    [sprite setTextureRect:CGRectMake(0,0,sz.width,sz.height)];
+    sprite.color = ccc3(150,150,200);
+    [self addChild:sprite z:Z_BG];
+  
+  }
+
 
 - (void) dealloc
 {
-    [newBlocks release];
-    [oldBlocks release];
+    [readyBlocks release];
+    [usedBlocks release];
     [currentLayout release];
     [movingBlock release];
 	
@@ -235,11 +232,8 @@ static ccColor3B colors[] = {
     for (NSString* key in currentMap) {
         NSMutableDictionary* node = [currentMap objectForKey:key];
         if([node objectForKey:@"exp"] != [node objectForKey:@"now"]) {
-            NSLog(@"X %@ %@ %@\n", key, [node objectForKey:@"now"], [node objectForKey:@"exp"]);
+            //NSLog(@"X %@ %@ %@ \n", key, [node objectForKey:@"exp"], [node objectForKey:@"now"]);
             return NO;
-        } else {
-            NSLog(@"V %@ %@ %@\n", key, [node objectForKey:@"now"], [node objectForKey:@"exp"]);
-
         }
 
     }
@@ -271,7 +265,7 @@ static ccColor3B colors[] = {
     [sprite setTextureRect:CGRectMake(0,0,cellSize,cellSize)];
     sprite.color = [movingBlock color];
     [self addChild:sprite z:Z_BLOCK_MOVING];
-    [oldBlocks addObject:sprite];
+    [usedBlocks addObject:sprite];
     [self removeChild:movingBlock cleanup:true];
     movingBlock = nil;
 }
@@ -293,14 +287,13 @@ static ccColor3B colors[] = {
     [self addChild:shadow z:Z_SHADOW tag:TAG_SHADOW];
 }
 
--(void) removeMapNode:(CGRect) rect 
+-(void) removeMapNode:(CGPoint) position
 {
-    int x = (rect.origin.x - offsetX) / cellSize;
-    int y = (rect.origin.y - offsetY) / cellSize;
+    int x = (position.x - offsetX) / cellSize;
+    int y = (position.y - offsetY) / cellSize;
     NSString *pos = [NSString stringWithFormat:@"%d_%d", x,y];
     [[currentMap objectForKey:pos] setValue:nil forKey:@"now"];
-
-    NSLog(@"rm %@ %@ \n", pos, [[currentMap objectForKey:pos] objectForKey:@"now"]);
+    NSLog(@"rm %d %d\n",x, y);
 
 }
 
@@ -315,7 +308,8 @@ static ccColor3B colors[] = {
         ccColor3B c = colors[i];
         if(c.r == cc.r && c.g == cc.g && c.b == cc.b){
             [[currentMap objectForKey:pos] setValue:[NSNumber numberWithInt:i] forKey:@"now"];
-            NSLog(@"now %@ %@ \n", pos, [[currentMap objectForKey:pos] objectForKey:@"now"]);
+            NSLog(@"ad %@ %d\n", pos, i);
+            return;
 
         }
     }
@@ -329,19 +323,19 @@ static ccColor3B colors[] = {
 	CGPoint point = [touch locationInView: [touch view]];
 	point = [[CCDirector sharedDirector] convertToGL: point];
 	//Process input for all sprites
-	for(id sprite in newBlocks){
+	for(id sprite in readyBlocks){
 		if(pointIsInRect(point, [sprite rect])){
             [self createMovingBlock:sprite];
 			return;
 		}
 	}
 
-	for(id sprite in oldBlocks){
+	for(id sprite in usedBlocks){
 		if(pointIsInRect(point, [sprite rect])){
             [self createMovingBlock:sprite];
-            [self removeMapNode:[self destRect:point]];
+            [self removeMapNode:[sprite position]];
             [self removeChild:sprite cleanup:true];
-            [oldBlocks removeObject:sprite];
+            [usedBlocks removeObject:sprite];
 			return;
 		}
 	}
@@ -377,10 +371,28 @@ static ccColor3B colors[] = {
     if([movingBlock isTouchedState]) {
 	   [movingBlock ccTouchesEnded:touches withEvent:event];
       if(pointIsInRect(point, padRect)){
-      	CGRect rect = [self destRect:point];
-          [self addMapNode:rect withColor:movingBlock.color];
+          bool overlap = NO;
+          CGRect rect = [self destRect:point];
 
-          [self createOldBlock:rect];
+          for(id sprite in usedBlocks){
+              if(CGPointEqualToPoint([ sprite position], rect.origin) ){
+                  overlap = YES;
+                  break;
+              }
+          }
+          if(!overlap) {
+              [self addMapNode:rect withColor:movingBlock.color];
+              
+              [self createOldBlock:rect];
+              
+          } else {
+              //animate
+              [self removeChild:movingBlock cleanup:true];
+              movingBlock = nil;
+
+  
+          }
+
 
       	  // show drop animate
           // update data
