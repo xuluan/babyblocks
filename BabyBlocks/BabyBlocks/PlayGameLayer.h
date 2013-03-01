@@ -28,17 +28,33 @@
 
 
     NSDictionary *currentLayout;
+    NSMutableDictionary* currentMap;
     
 }
 
 +(id) sceneWithLevel:(int)level withMode:(int)mode withSize:(int)size;
 -(id) initWithLevel:(int)level withMode:(int)mode withSize:(int)size;
--(void) loadLevel:(NSString*)str;
-//-(void) processSpriteFile:(NSDictionary*)node;
--(void) quit:(id)sender;
--(void) initColorBox;
--(void) drawGridWithOffset:(int)offset;
--(void) loadLayout;
--(void) drawColoredSpriteAt:(CGPoint)position withRect:(CGRect)rect withColor:(ccColor3B)color withZ:(float)z;
 
+-(void)initMap;
+-(void) loadLayout;
+-(void) initReadyBox;
+-(void) drawPad:(int) offset;
+-(void)drawMap:(id)node;
+-(void) loadLevel;
+-(void) quit:(id)sender;
+-(void) drawIcon;
+-(void) drawBG;
+
+-(void) removeMapNode:(StaticSprite *) block;
+-(void) addMapNode:(StaticSprite *) block;
+-(bool) isWin;
+
+- (void) dealloc;
+-(void) createMovingBlock: (StaticSprite *)block;
+-(void) createOldBlock:(CGRect)rect;
+- (CGRect) destRect: (CGPoint) point;
+-(void) addShadow:(CGPoint)point;
+-(void) ccTouchesBegan:(NSSet *)touches withEvent:(UIEvent *)event;
+-(void) ccTouchesMoved:(NSSet *)touches withEvent:(UIEvent *)event;
+-(void) ccTouchesEnded:(NSSet *)touches withEvent:(UIEvent *)event;
 @end

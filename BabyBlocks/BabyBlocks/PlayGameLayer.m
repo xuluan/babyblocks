@@ -21,6 +21,10 @@ enum {
 	Z_BLOCK_MOVING = 10
 };
 
+enum {
+    TAG_SHADOW = 1000;
+};
+
 static ccColor3B colors[] = {
 	{255,0,0},   // red
     {255,255,0}, // yellow
@@ -54,100 +58,97 @@ static ccColor3B colors[] = {
 	if( (self=[super init] )) {
         self.isTouchEnabled = YES;
         movingBlock = nil;
+
+        //init map data 
+        [self initMap];
+
+        //load layout settings according to currentSize
         [self loadLayout];
-
         
-		//background
-        [self drawColoredSpriteAt:ccp(0,0) withRect:CGRectMake(0,0,sz.width*2,sz.height*2) withColor:ccc3(150,150,200) withZ:Z_BG];
+        //init and draw readyBlocks
+        [self initReadyBox];
 
+        //draw pad
+        [self drawPad:(sz.width/2)];
+        [self drawPad:(0)];
         
-        //draw color box
-        [self initColorBox];
-
-        [self drawGridWithOffset:(sz.width/2)];
-        [self drawGridWithOffset:(0)];
-        
-		//Load our level
+		//Load level, draw map and update map data
 		[self loadLevel];
 
-		//Quit button
-		CCMenuItemFont *quitItem = [CCMenuItemFont itemFromString:@"Quit" target:self selector:@selector(quit:)];
-		CCMenu *menu = [CCMenu menuWithItems: quitItem, nil];
-		menu.position = ccp(100, sz.height - 75);
-		[self addChild:menu z:Z_ICON];
+		//Quit button, prev, next, hint, ...
+        [self drawIcon];
+
+        //draw background
+        [self drawBG];
+
 	}
 	return self;
 }
 
+-(void)initMap
+{
+    NSString *pos = [NSString stringWithFormat:@"%d_%d", x,y];
 
--(void) drawColoredSpriteAt:(CGPoint)position withRect:(CGRect)rect withColor:(ccColor3B)color withZ:(float)z {
-	CCSprite *sprite = [CCSprite spriteWithFile:@"blank.png"];
-	[sprite setPosition:position];
-	[sprite setTextureRect:rect];
-	[sprite setColor:color];
-	[self addChild:sprite];
-	
-	//Set Z Order
-	[self reorderChild:sprite z:z];
+    currentMap = @{};
+
+    for(int x=0; x<currentSize; x++){
+        for(int y=0; y<currentSize; y++){
+            currentMap[pos] = @{@"exp":nil, @"now":nil};
+        }
+    }
 }
 
-/* Add sprites which correspond to grid nodes */
--(void) drawGridWithOffset:(int) offset {    
+-(void) loadLayout {
+    NSString *jsonString = [[NSString alloc] initWithContentsOfFile:getActualPath(@"layout.json") encoding:NSUTF8StringEncoding error:nil];
+    NSData *jsonData = [jsonString dataUsingEncoding:NSUTF32BigEndianStringEncoding];
+    NSDictionary *dict = [[CJSONDeserializer deserializer] deserializeAsDictionary:jsonData error:nil];
+    NSString *usingSize = [NSString stringWithFormat:@"%d",currentSize];
+    currentLayout = [dict objectForKey:usingSize];
+    cellSize = [[currentLayout objectForKey:@"interval"] intValue];
+
+}
+
+-(void) initReadyBox {
+    newBlocks = [[NSMutableArray alloc] init];
+    oldBlocks = [[NSMutableArray alloc] init];
+    CGSize size = [[CCDirector sharedDirector] winSize];
+    
+    for(int x=0; x<5; x++){
+        StaticSprite *sprite = [StaticSprite spriteWithFile:@"blank.png"];
+        
+        sprite.position = ccp(x*100+300, size.height-75);
+        [sprite setTextureRect:CGRectMake(0,0,cellSize,cellSize)];
+        sprite.color = colors[x];
+        [self addChild:sprite z:Z_BLOCK];
+        [newBlocks addObject:sprite];
+    }
+}
+
+-(void) drawPad:(int) offset {    
     
     int offset_x = [[currentLayout objectForKey:@"offset_x"] intValue];
     int offset_y = [[currentLayout objectForKey:@"offset_y"] intValue];
     int interval = [[currentLayout objectForKey:@"interval"] intValue];
 
     if(offset > 0) {
-	    offsetX = offset + offset_x;
+        offsetX = offset + offset_x;
         offsetX2 = offset_x;
-	    cellSize = interval;
-	    offsetY = offset_y;
-	    padRect = CGRectMake(offsetX - cellSize/2, offsetY, cellSize * currentSize, cellSize * currentSize);
+        cellSize = interval;
+        offsetY = offset_y;
+        padRect = CGRectMake(offsetX - cellSize/2, offsetY, cellSize * currentSize, cellSize * currentSize);
     }
 
-	for(int x=0; x<currentSize; x++){
-		for(int y=0; y<currentSize; y++){
+    for(int x=0; x<currentSize; x++){
+        for(int y=0; y<currentSize; y++){
             
-			CCSprite *sprite = [CCSprite spriteWithFile:[currentLayout objectForKey:@"cell_pic"]];
-			sprite.position = ccp(x*interval+offset+offset_x,y*interval+offset_y);
+            CCSprite *sprite = [CCSprite spriteWithFile:[currentLayout objectForKey:@"cell_pic"]];
+            sprite.position = ccp(x*interval+offset+offset_x,y*interval+offset_y);
 
             sprite.color = ccc3(200,200,200);
 
-			[self addChild:sprite];
-		}
-	}
-}
-
--(void) initColorBox {
-	newBlocks = [[NSMutableArray alloc] init];
-    oldBlocks = [[NSMutableArray alloc] init];
-    CGSize size = [[CCDirector sharedDirector] winSize];
-    
-    for(int x=0; x<5; x++){
-		StaticSprite *sprite = [StaticSprite spriteWithFile:@"blank.png"];
-        
-		sprite.position = ccp(x*100+300, size.height-75);
-		[sprite setTextureRect:CGRectMake(0,0,cellSize,cellSize)];
-		sprite.color = colors[x];
-		[self addChild:sprite z:Z_BLOCK];
-		[newBlocks addObject:sprite];
-	}
-}
-
--(void) quit:(id)sender {
-    [[CCDirector sharedDirector] popScene];
-    [[CCTextureCache sharedTextureCache] removeAllTextures];
-}
-
--(void) loadLayout {
-	NSString *jsonString = [[NSString alloc] initWithContentsOfFile:getActualPath(@"layout.json") encoding:NSUTF8StringEncoding error:nil];
-	NSData *jsonData = [jsonString dataUsingEncoding:NSUTF32BigEndianStringEncoding];
-	NSDictionary *dict = [[CJSONDeserializer deserializer] deserializeAsDictionary:jsonData error:nil];
-    NSString *usingSize = [NSString stringWithFormat:@"%d",currentSize];
-	currentLayout = [dict objectForKey:usingSize];
-    cellSize = [[currentLayout objectForKey:@"interval"] intValue];
-
+            [self addChild:sprite];
+        }
+    }
 }
 
 -(void)drawMap:(id)node
@@ -155,50 +156,83 @@ static ccColor3B colors[] = {
     int x = [[node objectForKey:@"x"] intValue];
     int y = [[node objectForKey:@"y"] intValue];
     int c = [[node objectForKey:@"c"] intValue];
-    
+    NSString *pos = [NSString stringWithFormat:@"%d_%d", x,y];
+
     CCSprite *sprite = [CCSprite spriteWithFile:@"blank.png"];
     sprite.position = ccp(offsetX2+x*cellSize, offsetY+y*cellSize);
     [sprite setTextureRect:CGRectMake(0,0,cellSize,cellSize)];
     sprite.color = colors[c];
     [self addChild:sprite z:Z_BLOCK];
 
-
+    currentMap[pos][@"exp"] = colors[c];
 }
 
-//Load level file and process sprites
 -(void) loadLevel
 {
     NSString *str = [NSString stringWithFormat:@"%d_%d.json", currentSize,currentLevel];
-	NSString *jsonString = [[NSString alloc] initWithContentsOfFile:getActualPath(str) encoding:NSUTF8StringEncoding error:nil];
-	NSData *jsonData = [jsonString dataUsingEncoding:NSUTF32BigEndianStringEncoding];
-	NSDictionary *dict = [[CJSONDeserializer deserializer] deserializeAsDictionary:jsonData error:nil];
+    NSString *jsonString = [[NSString alloc] initWithContentsOfFile:getActualPath(str) encoding:NSUTF8StringEncoding error:nil];
+    NSData *jsonData = [jsonString dataUsingEncoding:NSUTF32BigEndianStringEncoding];
+    NSDictionary *dict = [[CJSONDeserializer deserializer] deserializeAsDictionary:jsonData error:nil];
     
-	NSArray *map = [dict objectForKey:@"map"];
+    NSArray *map = [dict objectForKey:@"map"];
 
-	for (id node in map) {
+    for (id node in map) {
         [self drawMap:node];
-	}
+    }
 }
 
+-(void) quit:(id)sender {
+    [[CCDirector sharedDirector] popScene];
+    [[CCTextureCache sharedTextureCache] removeAllTextures];
+}
 
+-(void) drawIcon
+{
+    CCMenuItemFont *quitItem = [CCMenuItemFont itemFromString:@"Quit" target:self selector:@selector(quit:)];
+    CCMenu *menu = [CCMenu menuWithItems: quitItem, nil];
+    menu.position = ccp(100, sz.height - 75);
+    [self addChild:menu z:Z_ICON];    
+}
 
-// on "dealloc" you need to release all your retained objects
+-(void) drawBG
+{
+    CGSize sz = [[CCDirector sharedDirector] winSize];
+    CGPoint position = ccp(0,0);
+    GRect rect = CGRectMake(0,0,sz.width*2,sz.height*2);
+    ccColor3B color = ccc3(150,150,200)
+
+	CCSprite *sprite = [CCSprite spriteWithFile:@"blank.png"];
+	[sprite setPosition:position];
+	[sprite setTextureRect:rect];
+	[sprite setColor:color];
+	[self addChild:sprite];
+	
+	[self reorderChild:sprite z:Z_BG];
+}
+
 - (void) dealloc
 {
-	// in case you have something to dealloc, do it in this method
-	// in this particular example nothing needs to be released.
-	// cocos2d will automatically release all the children (Label)
     [newBlocks release];
     [oldBlocks release];
     [currentLayout release];
     [movingBlock release];
 	
     [self removeAllChildrenWithCleanup:YES];
-    
-	// don't forget to call "super dealloc"
-    
+
 	[super dealloc];
 }
+
+- (bool) isWin
+{
+    for (NSString* key in currentMap) {
+        NSDictionary* node = currentMap[key];
+        if(node[@"exp"] != node[@"now"]) {
+            return NO;
+        }
+    }
+    return YES;
+}
+
 -(void) createMovingBlock: (StaticSprite *)block {
     if(movingBlock){ 
     	NSLog("assert(false)!!!");
@@ -234,6 +268,36 @@ static ccColor3B colors[] = {
 	return CGRectMake(offsetX+x*cellSize,offsetY+y*cellSize, offsetX+(x+1)*cellSize-1, offsetY+(y+1)*cellSize-1);
 }
 
+-(void) addShadow:(CGPoint)point
+{
+    shadow = [CCSprite spriteWithFile:@"blank.png"];
+    shadow.position = ccp(0, 0);
+    [shadow setTextureRect:CGRectMake(0,0,cellSize,cellSize)];
+    shadow.color = colors[5];
+    shadow.position = point;
+    [self addChild:shadow z:Z_SHADOW tag:TAG_SHADOW];
+}
+
+-(void) removeMapNode:(StaticSprite *) block
+{
+    CGRect rect = [block rect];
+    int x = (rect.origin.x - offsetX) / cellSize;
+    int y = (rect.origin.y - offsetY) / cellSize;
+    NSString *pos = [NSString stringWithFormat:@"%d_%d", x,y];
+    currentMap[pos][@"now"] = nil;
+
+
+}
+
+-(void) addMapNode:(StaticSprite *) block
+{
+    CGRect rect = [block rect];
+    int x = (rect.origin.x - offsetX) / cellSize;
+    int y = (rect.origin.y - offsetY) / cellSize;
+    NSString *pos = [NSString stringWithFormat:@"%d_%d", x,y];
+    currentMap[pos][@"now"] = block.color;
+}
+
 /* Process touch events */
 -(void) ccTouchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
 	if(movingBlock){ return; }
@@ -252,21 +316,12 @@ static ccColor3B colors[] = {
 	for(id sprite in oldBlocks){
 		if(pointIsInRect(point, [sprite rect])){
             [self createMovingBlock:sprite];
+            [self removeMapNode:sprite];
             [self removeChild:sprite cleanup:true];
             [oldBlocks removeObject:sprite];
 			return;
 		}
 	}
-}
-
--(void) addShadow:(CGPoint)point
-{
-    shadow = [CCSprite spriteWithFile:@"blank.png"];
-    shadow.position = ccp(0, 0);
-    [shadow setTextureRect:CGRectMake(0,0,cellSize,cellSize)];
-    shadow.color = colors[5];
-    shadow.position = point;
-    [self addChild:shadow z:Z_SHADOW tag:1000];
 }
 
 -(void) ccTouchesMoved:(NSSet *)touches withEvent:(UIEvent *)event {
@@ -276,8 +331,8 @@ static ccColor3B colors[] = {
 
 	//Process input for all sprites
     if([movingBlock isTouchedState]) {
-        if([self getChildByTag:1000]){
-          [self removeChildByTag:1000 cleanup:YES];
+        if([self getChildByTag:TAG_SHADOW]){
+          [self removeChildByTag:TAG_SHADOW cleanup:YES];
         }
         [movingBlock ccTouchesMoved:touches withEvent:event];
         // show shadow
@@ -301,6 +356,8 @@ static ccColor3B colors[] = {
       if(pointIsInRect(point, padRect)){
       	CGRect rect = [self destRect:point];
           [self createOldBlock:rect];
+          [self removeMapNode:sprite];
+
       	  // show drop animate
           // update data
           // win?
@@ -308,6 +365,12 @@ static ccColor3B colors[] = {
       	  //   dispear animatemovingBlock
           [self removeChild:movingBlock cleanup:true];
           movingBlock = nil;
+      }
+
+      if([self isWin]) {
+        // show animate
+        // menu, play again, play another
+
       }
     }
 }
