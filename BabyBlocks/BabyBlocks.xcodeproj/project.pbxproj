@@ -154,7 +154,7 @@
 		A98873DD16DD1BD900478258 /* grid50.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = grid50.png; path = Resources/grid50.png; sourceTree = "<group>"; };
 		A98873DF16DD9C0A00478258 /* layout.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = layout.json; path = Resources/layout.json; sourceTree = "<group>"; };
 		A98873E116DDA0F100478258 /* ActualPath.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ActualPath.h; path = libs/ActualPath.h; sourceTree = "<group>"; };
-		A98873E216DDC07100478258 /* ColorTouchSprite.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ColorTouchSprite.h; path = libs/ColorTouchSprite.h; sourceTree = "<group>"; };
+		A98873E216DDC07100478258 /* TouchableSprite.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TouchableSprite.h; path = libs/TouchableSprite.h; sourceTree = "<group>"; };
 		A98873E316DDC22100478258 /* grid40.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = grid40.png; path = Resources/grid40.png; sourceTree = "<group>"; };
 		A98873E416DDC22100478258 /* grid75.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = grid75.png; path = Resources/grid75.png; sourceTree = "<group>"; };
 		A991E04816D928F0002C9F54 /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
@@ -458,7 +458,7 @@
 				A986412516DC564A00D0E69A /* MainMenuLayer.m */,
 				A98872F916DCBD0C00478258 /* PlayGameLayer.h */,
 				A98872FA16DCBD0C00478258 /* PlayGameLayer.m */,
-				A98873E216DDC07100478258 /* ColorTouchSprite.h */,
+				A98873E216DDC07100478258 /* TouchableSprite.h */,
 				A99A896516D8A90800C29688 /* GameConfig.h */,
 				A99A880B16D8A90600C29688 /* Resources */,
 				A99A881F16D8A90600C29688 /* libs */,

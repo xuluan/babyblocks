@@ -9,7 +9,7 @@
 #import "PlayGameLayer.h"
 #import "CJSONDeserializer.h"
 #import "ActualPath.h"
-#import "ColorTouchSprite.h"
+#import "TouchableSprite.h"
 
 
 enum {
@@ -35,6 +35,21 @@ static ccColor3B colors[] = {
    
 };
 
+bool pointIsInRect(CGPoint p, CGRect r){
+	bool isInRect = false;
+	if( p.x < r.origin.x + r.size.width &&
+	   p.x > r.origin.x &&
+	   p.y < r.origin.y + r.size.height &&
+	   p.y > r.origin.y )
+	{
+		isInRect = true;
+	}
+	return isInRect;
+}
+
+float qDistance(CGPoint p1, CGPoint p2){
+	return abs(p1.x-p2.x) + abs(p1.y-p2.y);
+}
 
 @implementation PlayGameLayer
 
@@ -118,7 +133,7 @@ static ccColor3B colors[] = {
     CGSize size = [[CCDirector sharedDirector] winSize];
     
     for(int x=0; x<5; x++){
-        StaticSprite *sprite = [StaticSprite spriteWithFile:@"blank.png"];
+        TouchableSprite *sprite = [TouchableSprite spriteWithFile:@"blank.png"];
         
         sprite.position = ccp(x*100+300, size.height-75);
         [sprite setTextureRect:CGRectMake(0,0,cellSize,cellSize)];
@@ -242,13 +257,13 @@ static ccColor3B colors[] = {
     return YES;
 }
 
--(void) createMovingBlock: (StaticSprite *)block {
+-(void) createMovingBlock: (TouchableSprite *)block {
     if(movingBlock){ 
     	NSLog(@"assert(false)!!!");
     	return; 
     }
 
-    movingBlock = [ColorTouchSprite spriteWithFile:@"blank.png"];
+    movingBlock = [TouchableSprite spriteWithFile:@"blank.png"];
     
     movingBlock.position = [block position];
     [movingBlock setTextureRect:CGRectMake(0,0,cellSize,cellSize)];
@@ -259,7 +274,7 @@ static ccColor3B colors[] = {
 -(void) createUsedBlock:(CGRect)rect
 {
 
-    StaticSprite *sprite = [ColorTouchSprite spriteWithFile:@"blank.png"];
+    TouchableSprite *sprite = [TouchableSprite spriteWithFile:@"blank.png"];
     
     sprite.position = rect.origin;
     [sprite setTextureRect:CGRectMake(0,0,cellSize,cellSize)];

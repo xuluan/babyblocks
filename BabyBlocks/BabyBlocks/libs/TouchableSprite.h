@@ -1,43 +1,10 @@
 #import "cocos2d.h"
 
 
-bool pointIsInRect(CGPoint p, CGRect r){
-	bool isInRect = false;
-	if( p.x < r.origin.x + r.size.width &&
-	   p.x > r.origin.x &&
-	   p.y < r.origin.y + r.size.height &&
-	   p.y > r.origin.y )
-	{
-		isInRect = true;
-	}
-	return isInRect;
-}
 
-float qDistance(CGPoint p1, CGPoint p2){
-	return abs(p1.x-p2.x) + abs(p1.y-p2.y);
-}
 
-@interface StaticSprite : CCSprite
-{
-    
-}
 
--(CGRect) rect;
-@end
-
-@implementation StaticSprite
-
-- (CGRect) rect {
-	float scaleMod = 1.0f;
-	float w = [self contentSize].width * [self scale] * scaleMod;
-	float h = [self contentSize].height * [self scale] * scaleMod;
-	CGPoint point = CGPointMake([self position].x - (w/2), [self position].y - (h/2));
-	
-	return CGRectMake(point.x, point.y, w, h);
-}
-@end
-
-@interface ColorTouchSprite : CCSprite
+@interface TouchableSprite : CCSprite
 {
     bool isTouched;				//Are we touching this currently?
     
@@ -54,7 +21,7 @@ float qDistance(CGPoint p1, CGPoint p2){
 @end
 
 //Implementation
-@implementation ColorTouchSprite
+@implementation TouchableSprite
 
 @synthesize touchedState;
 
