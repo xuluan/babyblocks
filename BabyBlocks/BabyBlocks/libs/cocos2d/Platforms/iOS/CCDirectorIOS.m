@@ -210,7 +210,16 @@ CGFloat	__ccContentScaleFactor = 1;
 			glMatrixMode(GL_PROJECTION);
 			glLoadIdentity();
 //			gluPerspective(60, (GLfloat)size.width/size.height, zeye-size.height/2, zeye+size.height/2 );
-			gluPerspective(60, (GLfloat)size.width/size.height, 0.5f, 1500);
+			//gluPerspective(60, (GLfloat)size.width/size.height, 0.5f, 1500); //commented by xuluan
+			//add by xuluan start
+			if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad &&
+               [[UIScreen mainScreen] scale] > 1.0 )
+			{
+			    gluPerspective(60, (GLfloat)size.width/size.height, zeye-size.height/2, zeye+size.height/2 );
+			} else {
+			    gluPerspective(60, (GLfloat)size.width/size.height, 0.5f, 1500);
+			}
+			//add by xuluan end
 
 			glMatrixMode(GL_MODELVIEW);	
 			glLoadIdentity();
