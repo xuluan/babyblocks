@@ -9,7 +9,6 @@
 #import "PlayGameLayer.h"
 #import "CJSONDeserializer.h"
 #import "ActualPath.h"
-#import "TouchableSprite.h"
 
 
 enum {

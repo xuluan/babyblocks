@@ -7,13 +7,14 @@
 //
 #import "cocos2d.h"
 #import "CCLayer.h"
+#import "TouchableSprite.h"
 
 
 @interface PlayGameLayer : CCLayer
 {
     NSMutableArray *readyBlocks;
     NSMutableArray *usedBlocks;
-    CCSprite *movingBlock;
+    TouchableSprite *movingBlock;
     CCSprite *shadow;
 
     int currentSize;
