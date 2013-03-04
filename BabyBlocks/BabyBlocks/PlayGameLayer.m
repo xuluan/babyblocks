@@ -370,8 +370,6 @@ float qDistance(CGPoint p1, CGPoint p2){
       if(pointIsInRect(point, padRect)){
         CGRect rect = [self destRect:point];
           [self addShadow:rect.origin];
-      }else{
-          
       }
     }
 }
@@ -382,40 +380,40 @@ float qDistance(CGPoint p1, CGPoint p2){
 	point = [[CCDirector sharedDirector] convertToGL: point];
 	
 	//Process input for all sprites
-    if([movingBlock isTouchedState]) {
-	   [movingBlock ccTouchesEnded:touches withEvent:event];
-      if(pointIsInRect(point, padRect)){
-          bool overlap = NO;
-          CGRect rect = [self destRect:point];
+if([movingBlock isTouchedState]) {
+   [movingBlock ccTouchesEnded:touches withEvent:event];
+    if(pointIsInRect(point, padRect)){
+      bool overlap = NO;
+      CGRect rect = [self destRect:point];
 
-          for(id sprite in usedBlocks){
-              if(CGPointEqualToPoint([ sprite position], rect.origin) ){
-                  overlap = YES;
-                  break;
-              }
-          }
-          if(!overlap) {
+        if([self getChildByTag:TAG_SHADOW]){
+           [self removeChildByTag:TAG_SHADOW cleanup:YES];
+        }
+
+            for(id sprite in usedBlocks){
+                if(CGPointEqualToPoint([ sprite position], rect.origin) ){
+                    overlap = YES;
+                    break;
+                }
+            }
+            if(!overlap) {
               [self addMapNode:rect withColor:movingBlock.color];
-              
               [self createUsedBlock:rect];
-              
-          } else {
+            } else {
               //animate
               [self removeChild:movingBlock cleanup:true];
               movingBlock = nil;
-
-  
-          }
+            }
 
 
-      	  // show drop animate
-          // update data
-          // win?
-      } else {
-      	  //   dispear animatemovingBlock
+        // show drop animate
+        // update data
+        // win?
+    } else {
+        //   dispear animatemovingBlock
           [self removeChild:movingBlock cleanup:true];
           movingBlock = nil;
-      }
+    }
 
       if([self isWin]) {
         // show animate
