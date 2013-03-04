@@ -21,7 +21,8 @@ enum {
 };
 
 enum {
-    TAG_SHADOW = 1000
+    TAG_SHADOW = 1000,
+    TAG_EFFECT_NODE = 2000
 };
 
 static ccColor3B colors[] = {
@@ -329,6 +330,23 @@ float qDistance(CGPoint p1, CGPoint p2){
     }
 }
 
+-(CCParticleExplosion*) getEffect {
+	return [CCParticleExplosion node];
+}
+-(void) playWin {
+
+	NSString *method = [NSString stringWithFormat:@"getEffect"];
+	CCParticleSystem *node = [self performSelector:NSSelectorFromString(method)];
+    node.life = 0.2;
+    node.autoRemoveOnFinish = YES;
+    
+	[self addChild:node z:1 tag:TAG_EFFECT_NODE];
+    CGSize sz = [[CCDirector sharedDirector] winSize];
+
+	[node setPosition:ccp(sz.width/2, sz.height/2)];
+
+}
+
 /* Process touch events */
 -(void) ccTouchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
 	if(movingBlock){ return; }
@@ -337,6 +355,7 @@ float qDistance(CGPoint p1, CGPoint p2){
 	CGPoint point = [touch locationInView: [touch view]];
 	point = [[CCDirector sharedDirector] convertToGL: point];
 	//Process input for all sprites
+
 	for(id sprite in readyBlocks){
 		if(pointIsInRect(point, [sprite rect])){
             [self createMovingBlock:sprite];
@@ -418,6 +437,7 @@ if([movingBlock isTouchedState]) {
       if([self isWin]) {
         // show animate
         // menu, play again, play another
+          [self playWin];
 
       }
     }
