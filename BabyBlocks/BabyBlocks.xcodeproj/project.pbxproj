@@ -139,6 +139,17 @@
 		A99A896116D8A90800C29688 /* RootViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A99A896016D8A90800C29688 /* RootViewController.m */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXBuildRule section */
+		A937C2F016E247BD001B01D6 /* PBXBuildRule */ = {
+			isa = PBXBuildRule;
+			compilerSpec = com.apple.compilers.proxy.script;
+			fileType = pattern.proxy;
+			isEditable = 1;
+			outputFiles = (
+			);
+		};
+/* End PBXBuildRule section */
+
 /* Begin PBXFileReference section */
 		A927FF6C16DF8C660016D7D3 /* 3_1.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = 3_1.json; path = data/3_1.json; sourceTree = "<group>"; };
 		A927FF6D16DF8C660016D7D3 /* 7_1.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = 7_1.json; path = data/7_1.json; sourceTree = "<group>"; };
@@ -821,6 +832,7 @@
 				A99A87F516D8A90600C29688 /* Resources */,
 			);
 			buildRules = (
+				A937C2F016E247BD001B01D6 /* PBXBuildRule */,
 			);
 			dependencies = (
 			);
