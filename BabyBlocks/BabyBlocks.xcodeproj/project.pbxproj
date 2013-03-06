@@ -14,6 +14,7 @@
 		A927FF7616DF91360016D7D3 /* 7_0.json in Resources */ = {isa = PBXBuildFile; fileRef = A927FF7316DF91360016D7D3 /* 7_0.json */; };
 		A927FF7716DF91360016D7D3 /* 10_0.json in Resources */ = {isa = PBXBuildFile; fileRef = A927FF7416DF91360016D7D3 /* 10_0.json */; };
 		A937C2ED16E19430001B01D6 /* TouchableSprite.m in Sources */ = {isa = PBXBuildFile; fileRef = A937C2EC16E19430001B01D6 /* TouchableSprite.m */; };
+		A96C5CA716E4F80600B20DA0 /* fire.png in Resources */ = {isa = PBXBuildFile; fileRef = A96C5CA616E4F80600B20DA0 /* fire.png */; };
 		A986412616DC564A00D0E69A /* MainMenuLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = A986412516DC564A00D0E69A /* MainMenuLayer.m */; };
 		A98872FB16DCBD0C00478258 /* PlayGameLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = A98872FA16DCBD0C00478258 /* PlayGameLayer.m */; };
 		A98873D716DCEB8600478258 /* blank.png in Resources */ = {isa = PBXBuildFile; fileRef = A98873D516DCEB8600478258 /* blank.png */; };
@@ -158,6 +159,7 @@
 		A927FF7316DF91360016D7D3 /* 7_0.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = 7_0.json; path = data/7_0.json; sourceTree = "<group>"; };
 		A927FF7416DF91360016D7D3 /* 10_0.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = 10_0.json; path = data/10_0.json; sourceTree = "<group>"; };
 		A937C2EC16E19430001B01D6 /* TouchableSprite.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TouchableSprite.m; path = libs/TouchableSprite.m; sourceTree = "<group>"; };
+		A96C5CA616E4F80600B20DA0 /* fire.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = fire.png; path = BabyBlocks/Resources/fire.png; sourceTree = "<group>"; };
 		A986412416DC564A00D0E69A /* MainMenuLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MainMenuLayer.h; sourceTree = "<group>"; };
 		A986412516DC564A00D0E69A /* MainMenuLayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MainMenuLayer.m; sourceTree = "<group>"; };
 		A98872F916DCBD0C00478258 /* PlayGameLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlayGameLayer.h; sourceTree = "<group>"; };
@@ -428,6 +430,7 @@
 		A99A87EE16D8A90600C29688 = {
 			isa = PBXGroup;
 			children = (
+				A96C5CA616E4F80600B20DA0 /* fire.png */,
 				A98873D516DCEB8600478258 /* blank.png */,
 				A98873D616DCEB8600478258 /* gridNode.png */,
 				A991E04816D928F0002C9F54 /* Default-568h@2x.png */,
@@ -893,6 +896,7 @@
 				A927FF7516DF91360016D7D3 /* 3_0.json in Resources */,
 				A927FF7616DF91360016D7D3 /* 7_0.json in Resources */,
 				A927FF7716DF91360016D7D3 /* 10_0.json in Resources */,
+				A96C5CA716E4F80600B20DA0 /* fire.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
