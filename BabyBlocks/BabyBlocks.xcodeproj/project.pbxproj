@@ -138,6 +138,9 @@
 		A99A895B16D8A90800C29688 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = A99A895A16D8A90800C29688 /* main.m */; };
 		A99A895E16D8A90800C29688 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = A99A895D16D8A90800C29688 /* AppDelegate.m */; };
 		A99A896116D8A90800C29688 /* RootViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A99A896016D8A90800C29688 /* RootViewController.m */; };
+		A9CF737916E7776400547D09 /* red.png in Resources */ = {isa = PBXBuildFile; fileRef = A9CF737716E7776400547D09 /* red.png */; };
+		A9CF737A16E7776400547D09 /* settings.json in Resources */ = {isa = PBXBuildFile; fileRef = A9CF737816E7776400547D09 /* settings.json */; };
+		A9CF737C16E7792100547D09 /* red-3.png in Resources */ = {isa = PBXBuildFile; fileRef = A9CF737B16E7792100547D09 /* red-3.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXBuildRule section */
@@ -406,6 +409,9 @@
 		A99A895F16D8A90800C29688 /* RootViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RootViewController.h; sourceTree = "<group>"; };
 		A99A896016D8A90800C29688 /* RootViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RootViewController.m; sourceTree = "<group>"; };
 		A99A896516D8A90800C29688 /* GameConfig.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GameConfig.h; sourceTree = "<group>"; };
+		A9CF737716E7776400547D09 /* red.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = red.png; path = BabyBlocks/Resources/red.png; sourceTree = "<group>"; };
+		A9CF737816E7776400547D09 /* settings.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = settings.json; path = BabyBlocks/Resources/settings.json; sourceTree = "<group>"; };
+		A9CF737B16E7792100547D09 /* red-3.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "red-3.png"; path = "Resources/red-3.png"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -433,6 +439,8 @@
 				A96C5CA616E4F80600B20DA0 /* fire.png */,
 				A98873D516DCEB8600478258 /* blank.png */,
 				A98873D616DCEB8600478258 /* gridNode.png */,
+				A9CF737716E7776400547D09 /* red.png */,
+				A9CF737816E7776400547D09 /* settings.json */,
 				A991E04816D928F0002C9F54 /* Default-568h@2x.png */,
 				A99A880A16D8A90600C29688 /* BabyBlocks */,
 				A99A87F916D8A90600C29688 /* Frameworks */,
@@ -475,6 +483,7 @@
 				A98872F916DCBD0C00478258 /* PlayGameLayer.h */,
 				A937C2EC16E19430001B01D6 /* TouchableSprite.m */,
 				A98872FA16DCBD0C00478258 /* PlayGameLayer.m */,
+				A9CF737B16E7792100547D09 /* red-3.png */,
 				A98873E216DDC07100478258 /* TouchableSprite.h */,
 				A99A896516D8A90800C29688 /* GameConfig.h */,
 				A99A880B16D8A90600C29688 /* Resources */,
@@ -897,6 +906,9 @@
 				A927FF7616DF91360016D7D3 /* 7_0.json in Resources */,
 				A927FF7716DF91360016D7D3 /* 10_0.json in Resources */,
 				A96C5CA716E4F80600B20DA0 /* fire.png in Resources */,
+				A9CF737916E7776400547D09 /* red.png in Resources */,
+				A9CF737A16E7776400547D09 /* settings.json in Resources */,
+				A9CF737C16E7792100547D09 /* red-3.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

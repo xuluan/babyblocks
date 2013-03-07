@@ -35,6 +35,16 @@ static ccColor3B colors[] = {
    
 };
 
+static NSString* colors_name[] = {
+	@"red",   // red
+    @"yellow", // yellow
+    @"green",  // green
+    @"blue",   //blue
+    @"orange",  //orange
+    @"shadow"  //shadow
+    
+};
+
 bool pointIsInRect(CGPoint p, CGRect r){
 	bool isInRect = false;
 	if( p.x < r.origin.x + r.size.width &&
@@ -127,17 +137,22 @@ float qDistance(CGPoint p1, CGPoint p2){
 
 }
 
+-(NSString *) getBlockFileName:(int) color
+{
+    return  [NSString stringWithFormat:@"%@-%d.png", colors_name, currentSize];
+}
+
 -(void) initReadyBox {
     readyBlocks = [[NSMutableArray alloc] init];
     usedBlocks = [[NSMutableArray alloc] init];
     CGSize size = [[CCDirector sharedDirector] winSize];
     
     for(int x=0; x<5; x++){
-        TouchableSprite *sprite = [TouchableSprite spriteWithFile:@"blank.png"];
+        TouchableSprite *sprite = [TouchableSprite spriteWithFile:@"red-3.png"];
         
         sprite.position = ccp(x*100+300, size.height-75);
         [sprite setTextureRect:CGRectMake(0,0,cellSize,cellSize)];
-        sprite.color = colors[x];
+        //sprite.color = colors[x];
         [self addChild:sprite z:Z_BLOCK];
         [readyBlocks addObject:sprite];
     }
@@ -200,6 +215,19 @@ float qDistance(CGPoint p1, CGPoint p2){
     for (id node in map) {
         [self drawMap:node];
     }
+    
+    /*
+    NSString *str2 = [NSString stringWithFormat:@"%d_%d.json", currentSize+1,currentLevel+1];
+
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+    NSString *documentsDirectory = [paths objectAtIndex:0];
+    NSString *filePath = [documentsDirectory stringByAppendingPathComponent:str2];
+    
+    [str2 writeToFile:filePath atomically:YES encoding:NSUTF8StringEncoding error:nil];
+    NSString *str3 = [[NSString alloc] initWithContentsOfFile:filePath encoding:NSUTF8StringEncoding error:nil];
+    NSLog(@"str3 =%@ \n%@\n  %@\n", filePath , str3 , getActualPath(str));
+    */
+
 }
 
 -(void) quit:(id)sender {
@@ -263,22 +291,22 @@ float qDistance(CGPoint p1, CGPoint p2){
     	return; 
     }
 
-    movingBlock = [TouchableSprite spriteWithFile:@"blank.png"];
+    movingBlock = [TouchableSprite spriteWithFile:@"red-3.png"];
     
     movingBlock.position = [block position];
     [movingBlock setTextureRect:CGRectMake(0,0,cellSize,cellSize)];
-    movingBlock.color = [block color];
+    //movingBlock.color = [block color];
     [self addChild:movingBlock z:Z_BLOCK_MOVING];
 }
 
 -(void) createUsedBlock:(CGRect)rect
 {
 
-    TouchableSprite *sprite = [TouchableSprite spriteWithFile:@"blank.png"];
+    TouchableSprite *sprite = [TouchableSprite spriteWithFile:@"red-3.png"];
     
     sprite.position = rect.origin;
     [sprite setTextureRect:CGRectMake(0,0,cellSize,cellSize)];
-    sprite.color = [movingBlock color];
+    //sprite.color = [movingBlock color];
     [self addChild:sprite z:Z_BLOCK_MOVING];
     [usedBlocks addObject:sprite];
     [self removeChild:movingBlock cleanup:true];
