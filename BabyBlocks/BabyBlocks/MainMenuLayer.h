@@ -14,6 +14,10 @@
     CCMenu *mainMenu;
   	CCMenu *sizeToChoose;
     int currentSize;
+    int currentLevel;
+
+    NSDictionary *currentSettings;
+
 }
 
 

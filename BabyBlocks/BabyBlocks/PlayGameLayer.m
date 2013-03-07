@@ -63,22 +63,25 @@ float qDistance(CGPoint p1, CGPoint p2){
 
 @implementation PlayGameLayer
 
-+(id) sceneWithLevel:(int)level withMode:(int)mode withSize:(int)size
++(id) sceneWithSettings:(NSDictionary *)settings
 {
 	//Create our scene
 	CCScene *s = [CCScene node];
 
-	PlayGameLayer *node = [[PlayGameLayer alloc] initWithLevel:level withMode:mode withSize:size];
+	PlayGameLayer *node = [[PlayGameLayer alloc] initWithSettings:settings];
 	[s addChild:node z:Z_LAYER tag:0];
 	return s;
 }
 
 
--(id) initWithLevel:(int)level withMode:(int)mode withSize:(int)size {
+-(id) initWithSettings:(NSDictionary *)settings
+{
     CGSize sz = [[CCDirector sharedDirector] winSize];
-    currentSize = size;
-    currentMode = mode;
-    currentLevel = level;
+    currentSettings = settings;
+    currentSize = [[currentSettings objectForKey:@"current_size"] intValue];
+    NSString *size_key = [NSString stringWithFormat:@"%d", currentSize];
+    currentLevel = [[[currentSettings objectForKey:size_key] objectForKey:@"current_level"] intValue];
+    currentMaxLevel = = [[[currentSettings objectForKey:size_key] objectForKey:@"max_level"] intValue];
 
 	if( (self=[super init] )) {
         self.isTouchEnabled = YES;
@@ -257,6 +260,15 @@ float qDistance(CGPoint p1, CGPoint p2){
   
   }
 
+- (void) nextLevel
+{
+    currentLevel = (currentLevel == currentMaxLevel) ? 1:currentLevel+1;
+
+    NSString *size_key = [NSString stringWithFormat:@"%d", currentSize];
+    [[currentSettings objectForKey:size_key] setValue:[NSNumber numberWithInt:n] forKey:@"current_level"];
+    saveSettings(currentSettings);
+
+}
 
 - (void) dealloc
 {

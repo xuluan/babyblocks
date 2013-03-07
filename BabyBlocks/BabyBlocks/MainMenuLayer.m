@@ -61,8 +61,12 @@ enum {
 		mainMenu.position = center;
         [self addChild:mainMenu z:1];
         
-        currentSize = 7; //default size = 10 * 10
-        
+        //currentSize = 7; //default size = 10 * 10
+        loadSettings(currentSettings);
+        currentSize = [[currentSettings objectForKey:@"current_size"] intValue];
+        NSString *size_key = [NSString stringWithFormat:@"%d", currentSize];
+        currentLevel = [[[currentSettings objectForKey:size_key] objectForKey:@"current_level"] intValue];
+
         CCMenuItemFont* size3 = [CCMenuItemFont itemFromString:@"3 X 3" target:self selector:@selector(setSize3)];
         CCMenuItemFont* size7 = [CCMenuItemFont itemFromString:@"7 X 7" target:self selector:@selector(setSize7)];
         CCMenuItemFont* size10 = [CCMenuItemFont itemFromString:@"10 X 10" target:self selector:@selector(setSize10)];
@@ -108,6 +112,8 @@ enum {
 
 -(void) setSize:(int)n {
 	currentSize = n;
+	[currentSettings setValue:[NSNumber numberWithInt:n] forKey:@"current_size"];
+	saveSettings(currentSettings);
 
 	mainMenu.visible = YES;
 	sizeToChoose.visible = NO;

@@ -18,8 +18,8 @@
     CCSprite *shadow;
 
     int currentSize;
-    int currentMode;
     int currentLevel;
+    int currentMaxLevel;
 
     int cellSize;
     int offsetX;
@@ -30,11 +30,13 @@
 
     NSDictionary *currentLayout;
     NSMutableDictionary* currentMap;
+    NSDictionary *currentSettings;
+
     
 }
 
-+(id) sceneWithLevel:(int)level withMode:(int)mode withSize:(int)size;
--(id) initWithLevel:(int)level withMode:(int)mode withSize:(int)size;
++(id) sceneWithSettings:(NSDictionary *)settings;
+-(id) initWithSettings:(NSDictionary *)settings;
 
 -(void)initMap;
 -(void) loadLayout;

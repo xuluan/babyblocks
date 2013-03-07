@@ -8,3 +8,16 @@ NSString* getActualPath( NSString* file )
 		
 	return actualPath;
 }
+
+
+(void) loadSettings(NSDictionary *dictionary) {
+    NSString *jsonString = [[NSString alloc] initWithContentsOfFile:getActualPath(@"settings.json") encoding:NSUTF8StringEncoding error:nil];
+    NSData *jsonData = [jsonString dataUsingEncoding:NSUTF32BigEndianStringEncoding];
+    dictionary = [[CJSONDeserializer deserializer] deserializeAsDictionary:jsonData error:nil];
+}
+
+(void) saveSettings(NSDictionary *dictionary) {
+	NSData *jsonData = [[CJSONSerializer serializer] serializeObject:dictionary error:&error];
+    NSString *jsonString = [[NSString alloc] initWithData:jsonData  encoding:NSUTF8StringEncoding error:nil];
+    [jsonString writeToFile:getActualPath(@"settings.json") atomically:YES encoding:NSUTF8StringEncoding error:nil];
+}
