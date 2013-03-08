@@ -16,7 +16,7 @@
     int currentSize;
     int currentLevel;
 
-    NSDictionary *currentSettings;
+    NSMutableDictionary *currentSettings;
 
 }
 

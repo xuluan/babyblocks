@@ -30,13 +30,13 @@
 
     NSDictionary *currentLayout;
     NSMutableDictionary* currentMap;
-    NSDictionary *currentSettings;
+    NSMutableDictionary *currentSettings;
 
     
 }
 
-+(id) sceneWithSettings:(NSDictionary *)settings;
--(id) initWithSettings:(NSDictionary *)settings;
++(id) sceneWithSettings:(NSMutableDictionary *)settings;
+-(id) initWithSettings:(NSMutableDictionary *)settings;
 
 -(void)initMap;
 -(void) loadLayout;

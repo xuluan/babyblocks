@@ -63,7 +63,7 @@ float qDistance(CGPoint p1, CGPoint p2){
 
 @implementation PlayGameLayer
 
-+(id) sceneWithSettings:(NSDictionary *)settings
++(id) sceneWithSettings:(NSMutableDictionary *)settings
 {
 	//Create our scene
 	CCScene *s = [CCScene node];
@@ -74,7 +74,7 @@ float qDistance(CGPoint p1, CGPoint p2){
 }
 
 
--(id) initWithSettings:(NSDictionary *)settings
+-(id) initWithSettings:(NSMutableDictionary *)settings
 {
     CGSize sz = [[CCDirector sharedDirector] winSize];
     currentSettings = settings;
