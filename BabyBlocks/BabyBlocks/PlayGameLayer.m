@@ -46,6 +46,7 @@ static NSString* colors_name[] = {
 
 
 static float scale_per_size[] = { 0.0, 0.0, 0.0, 1.0, 0.0, 0.75, 0.0, 0.625, 0.0, 0.0, 0.5 };
+static float scale2_per_size[] = { 0.0, 0.0, 0.0, 1.2, 0.0, 0.9, 0.0, 0.7, 0.0, 0.0, 0.6 };
 
 bool pointIsInRect(CGPoint p, CGRect r){
 	bool isInRect = false;
@@ -305,6 +306,35 @@ float qDistance(CGPoint p1, CGPoint p2){
     return YES;
 }
 
+
+- (void) backWithBlock
+{
+    CGPoint point;
+
+    for(id sprite in readyBlocks){
+        if(sprite.color == movingBlock.color){
+            point = sprite.position;
+            break;
+        }
+    }
+
+    [movingBlock runAction: [CCSequence actions:[CCMoveBy actionWithDuration:1.0f position:point],
+    [CCScaleTo actionWithDuration:0.5f scale:scale2_per_size[currentSize]], 
+    [CCScaleTo actionWithDuration:0.5f scale:scale_per_size[currentSize]], nil] ]; 
+    /* not sure TODO
+    [self removeChild:movingBlock cleanup:true];
+    movingBlock = nil;    
+    */
+}
+
+- (void) dropWithBlock: (TouchableSprite *)block
+{
+    [block runAction: [CCSequence actions:
+    [CCScaleTo actionWithDuration:0.7f scale:scale2_per_size[currentSize]], 
+    [CCScaleTo actionWithDuration:0.7f scale:scale_per_size[currentSize]], nil] ]; 
+}
+
+
 -(void) createMovingBlock: (TouchableSprite *)block {
     if(movingBlock){ 
     	NSLog(@"assert(false)!!!");
@@ -331,6 +361,7 @@ float qDistance(CGPoint p1, CGPoint p2){
     //sprite.color = [movingBlock color];
     [self addChild:sprite z:Z_BLOCK_MOVING];
     [usedBlocks addObject:sprite];
+    [self dropWithBlock:sprite];
     [self removeChild:movingBlock cleanup:true];
     movingBlock = nil;
 }
@@ -383,6 +414,7 @@ float qDistance(CGPoint p1, CGPoint p2){
 -(CCParticleExplosion*) getEffect {
 	return [CCParticleExplosion node];
 }
+
 -(void) playWin {
 
 	NSString *method = [NSString stringWithFormat:@"getEffect"];
@@ -470,8 +502,7 @@ if([movingBlock isTouchedState]) {
               [self createUsedBlock:rect];
             } else {
               //animate
-              [self removeChild:movingBlock cleanup:true];
-              movingBlock = nil;
+              [self backWithBlock];
             }
 
 
@@ -480,8 +511,7 @@ if([movingBlock isTouchedState]) {
         // win?
     } else {
         //   dispear animatemovingBlock
-          [self removeChild:movingBlock cleanup:true];
-          movingBlock = nil;
+        [self backWithBlock];
     }
 
       if([self isWin]) {
