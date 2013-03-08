@@ -15,7 +15,6 @@
 		A927FF7716DF91360016D7D3 /* 10_0.json in Resources */ = {isa = PBXBuildFile; fileRef = A927FF7416DF91360016D7D3 /* 10_0.json */; };
 		A937C2ED16E19430001B01D6 /* TouchableSprite.m in Sources */ = {isa = PBXBuildFile; fileRef = A937C2EC16E19430001B01D6 /* TouchableSprite.m */; };
 		A96C5CA716E4F80600B20DA0 /* fire.png in Resources */ = {isa = PBXBuildFile; fileRef = A96C5CA616E4F80600B20DA0 /* fire.png */; };
-		A986412616DC564A00D0E69A /* MainMenuLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = A986412516DC564A00D0E69A /* MainMenuLayer.m */; };
 		A98872FB16DCBD0C00478258 /* PlayGameLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = A98872FA16DCBD0C00478258 /* PlayGameLayer.m */; };
 		A98873D716DCEB8600478258 /* blank.png in Resources */ = {isa = PBXBuildFile; fileRef = A98873D516DCEB8600478258 /* blank.png */; };
 		A98873D816DCEB8600478258 /* gridNode.png in Resources */ = {isa = PBXBuildFile; fileRef = A98873D616DCEB8600478258 /* gridNode.png */; };
@@ -138,6 +137,7 @@
 		A99A895B16D8A90800C29688 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = A99A895A16D8A90800C29688 /* main.m */; };
 		A99A895E16D8A90800C29688 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = A99A895D16D8A90800C29688 /* AppDelegate.m */; };
 		A99A896116D8A90800C29688 /* RootViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A99A896016D8A90800C29688 /* RootViewController.m */; };
+		A99D1EB516E8E7640012781B /* MainMenuLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = A99D1EB416E8E7640012781B /* MainMenuLayer.m */; };
 		A9CF737916E7776400547D09 /* red.png in Resources */ = {isa = PBXBuildFile; fileRef = A9CF737716E7776400547D09 /* red.png */; };
 		A9CF737A16E7776400547D09 /* settings.json in Resources */ = {isa = PBXBuildFile; fileRef = A9CF737816E7776400547D09 /* settings.json */; };
 		A9CF737C16E7792100547D09 /* red-3.png in Resources */ = {isa = PBXBuildFile; fileRef = A9CF737B16E7792100547D09 /* red-3.png */; };
@@ -164,7 +164,6 @@
 		A937C2EC16E19430001B01D6 /* TouchableSprite.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TouchableSprite.m; path = libs/TouchableSprite.m; sourceTree = "<group>"; };
 		A96C5CA616E4F80600B20DA0 /* fire.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = fire.png; path = BabyBlocks/Resources/fire.png; sourceTree = "<group>"; };
 		A986412416DC564A00D0E69A /* MainMenuLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MainMenuLayer.h; sourceTree = "<group>"; };
-		A986412516DC564A00D0E69A /* MainMenuLayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MainMenuLayer.m; sourceTree = "<group>"; };
 		A98872F916DCBD0C00478258 /* PlayGameLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlayGameLayer.h; sourceTree = "<group>"; };
 		A98872FA16DCBD0C00478258 /* PlayGameLayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PlayGameLayer.m; sourceTree = "<group>"; };
 		A98873D516DCEB8600478258 /* blank.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = blank.png; path = BabyBlocks/Resources/blank.png; sourceTree = "<group>"; };
@@ -409,6 +408,7 @@
 		A99A895F16D8A90800C29688 /* RootViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RootViewController.h; sourceTree = "<group>"; };
 		A99A896016D8A90800C29688 /* RootViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RootViewController.m; sourceTree = "<group>"; };
 		A99A896516D8A90800C29688 /* GameConfig.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GameConfig.h; sourceTree = "<group>"; };
+		A99D1EB416E8E7640012781B /* MainMenuLayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MainMenuLayer.m; sourceTree = "<group>"; };
 		A9CF737716E7776400547D09 /* red.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = red.png; path = BabyBlocks/Resources/red.png; sourceTree = "<group>"; };
 		A9CF737816E7776400547D09 /* settings.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = settings.json; path = BabyBlocks/Resources/settings.json; sourceTree = "<group>"; };
 		A9CF737B16E7792100547D09 /* red-3.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "red-3.png"; path = "Resources/red-3.png"; sourceTree = "<group>"; };
@@ -479,12 +479,11 @@
 				A99A895F16D8A90800C29688 /* RootViewController.h */,
 				A99A896016D8A90800C29688 /* RootViewController.m */,
 				A986412416DC564A00D0E69A /* MainMenuLayer.h */,
-				A986412516DC564A00D0E69A /* MainMenuLayer.m */,
 				A98872F916DCBD0C00478258 /* PlayGameLayer.h */,
 				A937C2EC16E19430001B01D6 /* TouchableSprite.m */,
 				A98872FA16DCBD0C00478258 /* PlayGameLayer.m */,
-				A9CF737B16E7792100547D09 /* red-3.png */,
 				A98873E216DDC07100478258 /* TouchableSprite.h */,
+				A99D1EB416E8E7640012781B /* MainMenuLayer.m */,
 				A99A896516D8A90800C29688 /* GameConfig.h */,
 				A99A880B16D8A90600C29688 /* Resources */,
 				A99A881F16D8A90600C29688 /* libs */,
@@ -496,6 +495,7 @@
 		A99A880B16D8A90600C29688 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				A9CF737B16E7792100547D09 /* red-3.png */,
 				A927FF7216DF91360016D7D3 /* 3_0.json */,
 				A927FF7316DF91360016D7D3 /* 7_0.json */,
 				A927FF7416DF91360016D7D3 /* 10_0.json */,
@@ -1016,9 +1016,9 @@
 				A99A895B16D8A90800C29688 /* main.m in Sources */,
 				A99A895E16D8A90800C29688 /* AppDelegate.m in Sources */,
 				A99A896116D8A90800C29688 /* RootViewController.m in Sources */,
-				A986412616DC564A00D0E69A /* MainMenuLayer.m in Sources */,
 				A98872FB16DCBD0C00478258 /* PlayGameLayer.m in Sources */,
 				A937C2ED16E19430001B01D6 /* TouchableSprite.m in Sources */,
+				A99D1EB516E8E7640012781B /* MainMenuLayer.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

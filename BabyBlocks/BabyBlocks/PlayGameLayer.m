@@ -78,10 +78,14 @@ float qDistance(CGPoint p1, CGPoint p2){
 {
     CGSize sz = [[CCDirector sharedDirector] winSize];
     currentSettings = settings;
+    NSLog(@"settings %@\n", settings);
+    NSLog(@"current %@\n", currentSettings);
     currentSize = [[currentSettings objectForKey:@"current_size"] intValue];
     NSString *size_key = [NSString stringWithFormat:@"%d", currentSize];
     currentLevel = [[[currentSettings objectForKey:size_key] objectForKey:@"current_level"] intValue];
-    currentMaxLevel = = [[[currentSettings objectForKey:size_key] objectForKey:@"max_level"] intValue];
+    currentMaxLevel = [[[currentSettings objectForKey:size_key] objectForKey:@"max_level"] intValue];
+    
+    NSLog(@"currentLevel %d, currentSize %d \n",currentLevel, currentSize);
 
 	if( (self=[super init] )) {
         self.isTouchEnabled = YES;
@@ -265,7 +269,7 @@ float qDistance(CGPoint p1, CGPoint p2){
     currentLevel = (currentLevel == currentMaxLevel) ? 1:currentLevel+1;
 
     NSString *size_key = [NSString stringWithFormat:@"%d", currentSize];
-    [[currentSettings objectForKey:size_key] setValue:[NSNumber numberWithInt:n] forKey:@"current_level"];
+    [[currentSettings objectForKey:size_key] setValue:[NSNumber numberWithInt:currentLevel] forKey:@"current_level"];
     saveSettings(currentSettings);
 
 }

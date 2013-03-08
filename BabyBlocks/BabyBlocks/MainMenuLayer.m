@@ -24,6 +24,9 @@ enum {
 	Z_HUD = 2
 };
 
+extern NSDictionary* loadSettings();
+extern void saveSettings(NSDictionary *dictionary);
+
 @implementation MainMenuLayer
 
 +(CCScene *) scene
@@ -48,6 +51,20 @@ enum {
 	// Apple recommends to re-assign "self" with the "super" return value
 	if( (self=[super init])) {
         
+        //currentSize = 7; //default size = 10 * 10
+        NSDictionary *dict = loadSettings();
+        
+        currentSettings = [[NSDictionary alloc ] initWithDictionary:dict];
+
+        NSLog(@"currentSettings %@", currentSettings);
+        
+        currentSize = [[currentSettings objectForKey:@"current_size"] intValue];
+        NSString *size_key = [NSString stringWithFormat:@"%d", currentSize];
+        currentLevel = [[[currentSettings objectForKey:size_key] objectForKey:@"current_level"] intValue];
+        
+        NSLog(@"aa currentLevel %d, currentSize %d \n",currentLevel, currentSize);
+        
+        
         CCMenuItemFont* startGameMIF = [CCMenuItemFont itemFromString:@"START GAME" target:self selector:@selector(startGame)];
         CCMenuItemFont* sizeMIF = [CCMenuItemFont itemFromString:@"SIZE" target:self selector:@selector(showSetSize)];
         CCMenuItemFont* modeMIF = [CCMenuItemFont itemFromString:@"MODE" target:self selector:@selector(startGame)];
@@ -60,12 +77,7 @@ enum {
         CGPoint center = ccp( size.width /2 , size.height/2);
 		mainMenu.position = center;
         [self addChild:mainMenu z:1];
-        
-        //currentSize = 7; //default size = 10 * 10
-        loadSettings(currentSettings);
-        currentSize = [[currentSettings objectForKey:@"current_size"] intValue];
-        NSString *size_key = [NSString stringWithFormat:@"%d", currentSize];
-        currentLevel = [[[currentSettings objectForKey:size_key] objectForKey:@"current_level"] intValue];
+
 
         CCMenuItemFont* size3 = [CCMenuItemFont itemFromString:@"3 X 3" target:self selector:@selector(setSize3)];
         CCMenuItemFont* size7 = [CCMenuItemFont itemFromString:@"7 X 7" target:self selector:@selector(setSize7)];
@@ -100,9 +112,9 @@ enum {
 
 -(void) startGame
 {
-    int level = 0;
-    int mode = 0;
-    [[CCDirector sharedDirector] pushScene:[PlayGameLayer sceneWithLevel:level withMode:mode withSize:currentSize]];
+    NSLog(@"currentSettings %@\n", currentSettings);
+
+    [[CCDirector sharedDirector] pushScene:[PlayGameLayer sceneWithSettings:currentSettings]];
 }
 
 -(void) showSetSize {
