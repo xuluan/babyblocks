@@ -11,7 +11,7 @@
 }
 
 @property (readwrite, assign) int touchedState;
-
+@property int color;
 -(id) init;
 -(CGRect) rect;
 -(void) ccTouchesBegan:(NSSet *)touches withEvent:(UIEvent *)event;

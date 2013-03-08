@@ -54,16 +54,10 @@ extern void saveSettings(NSDictionary *dictionary);
         //currentSize = 7; //default size = 10 * 10
         NSDictionary *dict = loadSettings();
         
-        currentSettings = [[NSDictionary alloc ] initWithDictionary:dict];
-
-        NSLog(@"currentSettings %@", currentSettings);
-        
+        currentSettings = [[NSDictionary alloc ] initWithDictionary:dict];        
         currentSize = [[currentSettings objectForKey:@"current_size"] intValue];
         NSString *size_key = [NSString stringWithFormat:@"%d", currentSize];
         currentLevel = [[[currentSettings objectForKey:size_key] objectForKey:@"current_level"] intValue];
-        
-        NSLog(@"aa currentLevel %d, currentSize %d \n",currentLevel, currentSize);
-        
         
         CCMenuItemFont* startGameMIF = [CCMenuItemFont itemFromString:@"START GAME" target:self selector:@selector(startGame)];
         CCMenuItemFont* sizeMIF = [CCMenuItemFont itemFromString:@"SIZE" target:self selector:@selector(showSetSize)];
@@ -101,6 +95,7 @@ extern void saveSettings(NSDictionary *dictionary);
 	// cocos2d will automatically release all the children (Label)
     [mainMenu release];
     [sizeToChoose release];
+    [currentSettings release]
 	
     [self removeAllChildrenWithCleanup:YES];
 
@@ -112,8 +107,6 @@ extern void saveSettings(NSDictionary *dictionary);
 
 -(void) startGame
 {
-    NSLog(@"currentSettings %@\n", currentSettings);
-
     [[CCDirector sharedDirector] pushScene:[PlayGameLayer sceneWithSettings:currentSettings]];
 }
 

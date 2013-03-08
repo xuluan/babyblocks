@@ -42,8 +42,10 @@ static NSString* colors_name[] = {
     @"blue",   //blue
     @"orange",  //orange
     @"shadow"  //shadow
-    
 };
+
+
+static float scale_per_size[] = { 0.0, 0.0, 0.0, 1.0, 0.0, 0.75, 0.0, 0.625, 0.0, 0.0, 0.5 };
 
 bool pointIsInRect(CGPoint p, CGRect r){
 	bool isInRect = false;
@@ -78,20 +80,16 @@ float qDistance(CGPoint p1, CGPoint p2){
 {
     CGSize sz = [[CCDirector sharedDirector] winSize];
     currentSettings = settings;
-    NSLog(@"settings %@\n", settings);
-    NSLog(@"current %@\n", currentSettings);
     currentSize = [[currentSettings objectForKey:@"current_size"] intValue];
     NSString *size_key = [NSString stringWithFormat:@"%d", currentSize];
     currentLevel = [[[currentSettings objectForKey:size_key] objectForKey:@"current_level"] intValue];
     currentMaxLevel = [[[currentSettings objectForKey:size_key] objectForKey:@"max_level"] intValue];
-    
-    NSLog(@"currentLevel %d, currentSize %d \n",currentLevel, currentSize);
 
 	if( (self=[super init] )) {
         self.isTouchEnabled = YES;
         movingBlock = nil;
 
-        //init map data 
+        //init empty map data structure
         [self initMap];
 
         //load layout settings according to currentSize
@@ -141,12 +139,16 @@ float qDistance(CGPoint p1, CGPoint p2){
     NSString *usingSize = [NSString stringWithFormat:@"%d",currentSize];
     currentLayout = [dict objectForKey:usingSize];
     cellSize = [[currentLayout objectForKey:@"interval"] intValue];
-
 }
 
--(NSString *) getBlockFileName:(int) color
+-(void) genNewBlock:(int) color withPosition: (CGPoint) point
 {
-    return  [NSString stringWithFormat:@"%@-%d.png", colors_name, currentSize];
+    NSString* file = [NSString stringWithFormat:@"%@.png", colors_name[color]];
+    newBlock = [TouchableSprite spriteWithFile:file];
+    [newBlock setScale:scale_per_size[currentSize]];
+    newBlock.position = point;
+    newBlock.color = color;
+
 }
 
 -(void) initReadyBox {
@@ -156,6 +158,10 @@ float qDistance(CGPoint p1, CGPoint p2){
     
     for(int x=0; x<5; x++){
         TouchableSprite *sprite = [TouchableSprite spriteWithFile:@"red-3.png"];
+        //[self genNewBlock:x withPosition:ccp(x*100+300, size.height-75);]
+        // [self addChild:newBlock z:Z_BLOCK];
+        //[readyBlocks addObject:newBlock];
+
         
         sprite.position = ccp(x*100+300, size.height-75);
         [sprite setTextureRect:CGRectMake(0,0,cellSize,cellSize)];
@@ -198,16 +204,14 @@ float qDistance(CGPoint p1, CGPoint p2){
     int y = [[node objectForKey:@"y"] intValue];
     int c = [[node objectForKey:@"c"] intValue];
     NSString *pos = [NSString stringWithFormat:@"%d_%d", x,y];
-
+    
+    //newBlock
     CCSprite *sprite = [CCSprite spriteWithFile:@"blank.png"];
     sprite.position = ccp(offsetX2+x*cellSize, offsetY+y*cellSize);
     [sprite setTextureRect:CGRectMake(0,0,cellSize,cellSize)];
     sprite.color = colors[c];
     [self addChild:sprite z:Z_BLOCK];
     [[currentMap objectForKey:pos] setValue:[NSNumber numberWithInt:c] forKey:@"exp"];
-    
-
-    
 }
 
 -(void) loadLevel
@@ -262,7 +266,7 @@ float qDistance(CGPoint p1, CGPoint p2){
     sprite.color = ccc3(150,150,200);
     [self addChild:sprite z:Z_BG];
   
-  }
+}
 
 - (void) nextLevel
 {
@@ -307,6 +311,8 @@ float qDistance(CGPoint p1, CGPoint p2){
     	return; 
     }
 
+    //newBlock
+
     movingBlock = [TouchableSprite spriteWithFile:@"red-3.png"];
     
     movingBlock.position = [block position];
@@ -317,7 +323,7 @@ float qDistance(CGPoint p1, CGPoint p2){
 
 -(void) createUsedBlock:(CGRect)rect
 {
-
+    //newBlock
     TouchableSprite *sprite = [TouchableSprite spriteWithFile:@"red-3.png"];
     
     sprite.position = rect.origin;
@@ -352,7 +358,7 @@ float qDistance(CGPoint p1, CGPoint p2){
     int y = (position.y - offsetY) / cellSize;
     NSString *pos = [NSString stringWithFormat:@"%d_%d", x,y];
     [[currentMap objectForKey:pos] setValue:nil forKey:@"now"];
-    NSLog(@"rm %d %d\n",x, y);
+    //NSLog(@"rm %d %d\n",x, y);
 
 }
 
@@ -367,7 +373,7 @@ float qDistance(CGPoint p1, CGPoint p2){
         ccColor3B c = colors[i];
         if(c.r == cc.r && c.g == cc.g && c.b == cc.b){
             [[currentMap objectForKey:pos] setValue:[NSNumber numberWithInt:i] forKey:@"now"];
-            NSLog(@"ad %@ %d\n", pos, i);
+            //NSLog(@"ad %@ %d\n", pos, i);
             return;
 
         }

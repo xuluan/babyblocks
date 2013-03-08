@@ -15,6 +15,8 @@
     NSMutableArray *readyBlocks;
     NSMutableArray *usedBlocks;
     TouchableSprite *movingBlock;
+    TouchableSprite *newBlock;
+
     CCSprite *shadow;
 
     int currentSize;
