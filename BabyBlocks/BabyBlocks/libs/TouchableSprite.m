@@ -9,6 +9,7 @@
 @implementation TouchableSprite
 
 @synthesize touchedState;
+@synthesize colorIndex;
 
 -(id) init {
     isTouched = YES;

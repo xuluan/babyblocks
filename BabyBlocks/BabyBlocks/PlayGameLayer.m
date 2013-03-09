@@ -34,7 +34,7 @@ static ccColor3B colors[] = {
     {127,127,127}  //shadow
    
 };
-
+/*
 static NSString* colors_name[] = {
 	@"red",   // red
     @"yellow", // yellow
@@ -44,6 +44,18 @@ static NSString* colors_name[] = {
     @"shadow"  //shadow
     
 };
+*/
+static NSString* colors_name[] = {
+	@"red",   // red
+    @"red", // yellow
+    @"red",  // green
+    @"red",   //blue
+    @"red",  //orange
+    @"shadow"  //shadow
+};
+
+static float scale_per_size[] = { 0.0, 0.0, 0.0, 1.0, 0.0, 0.75, 0.0, 0.625, 0.0, 0.0, 0.5 };
+static float scale2_per_size[] = { 0.0, 0.0, 0.0, 1.2, 0.0, 0.9, 0.0, 0.7, 0.0, 0.0, 0.6 };
 
 bool pointIsInRect(CGPoint p, CGRect r){
 	bool isInRect = false;
@@ -144,9 +156,13 @@ float qDistance(CGPoint p1, CGPoint p2){
 
 }
 
--(NSString *) getBlockFileName:(int) color
+-(void) genNewBlock:(int) color withPosition: (CGPoint) point
 {
-    return  [NSString stringWithFormat:@"%@-%d.png", colors_name, currentSize];
+    NSString* file = [NSString stringWithFormat:@"%@.png", colors_name[color]];
+    newBlock = [TouchableSprite spriteWithFile:file];
+    [newBlock setScale:scale_per_size[currentSize]];
+    newBlock.position = point;
+    newBlock.colorIndex = color;
 }
 
 -(void) initReadyBox {
@@ -155,13 +171,10 @@ float qDistance(CGPoint p1, CGPoint p2){
     CGSize size = [[CCDirector sharedDirector] winSize];
     
     for(int x=0; x<5; x++){
-        TouchableSprite *sprite = [TouchableSprite spriteWithFile:@"red-3.png"];
+        [self genNewBlock:x withPosition:ccp(x*100+300, size.height-75)];
+        [self addChild:newBlock z:Z_BLOCK];
+        [readyBlocks addObject:newBlock];
         
-        sprite.position = ccp(x*100+300, size.height-75);
-        [sprite setTextureRect:CGRectMake(0,0,cellSize,cellSize)];
-        //sprite.color = colors[x];
-        [self addChild:sprite z:Z_BLOCK];
-        [readyBlocks addObject:sprite];
     }
 }
 
@@ -198,15 +211,11 @@ float qDistance(CGPoint p1, CGPoint p2){
     int y = [[node objectForKey:@"y"] intValue];
     int c = [[node objectForKey:@"c"] intValue];
     NSString *pos = [NSString stringWithFormat:@"%d_%d", x,y];
-
-    CCSprite *sprite = [CCSprite spriteWithFile:@"blank.png"];
-    sprite.position = ccp(offsetX2+x*cellSize, offsetY+y*cellSize);
-    [sprite setTextureRect:CGRectMake(0,0,cellSize,cellSize)];
-    sprite.color = colors[c];
-    [self addChild:sprite z:Z_BLOCK];
-    [[currentMap objectForKey:pos] setValue:[NSNumber numberWithInt:c] forKey:@"exp"];
     
+    [self genNewBlock:c withPosition:ccp(offsetX2+x*cellSize, offsetY+y*cellSize)];
 
+    [self addChild:newBlock z:Z_BLOCK];
+    [[currentMap objectForKey:pos] setValue:[NSNumber numberWithInt:c] forKey:@"exp"];
     
 }
 
@@ -301,32 +310,76 @@ float qDistance(CGPoint p1, CGPoint p2){
     return YES;
 }
 
+- (void) cleanMovingBlock
+{
+    [self removeChild:movingBlock cleanup:true];
+    movingBlock = nil;
+}
+
+- (void) cleanMovingBlock2
+{
+    movingBlock = nil;
+}
+
+- (void) backWithBlock
+{
+    CGPoint point;
+    CGPoint point2 = [movingBlock position];
+  
+    for(id sprite in readyBlocks){
+        TouchableSprite *readyblock = sprite;
+        if(readyblock.colorIndex == movingBlock.colorIndex){
+            NSLog(@" ready block %@\n",  NSStringFromCGPoint([readyblock position]));
+            point = [readyblock position];
+            break;
+        }
+    }
+     
+     [movingBlock runAction: [CCSequence actions:[CCMoveBy actionWithDuration:0.5f position:ccp(point.x - point2.x, point.y- point2.y)],
+     [CCScaleTo actionWithDuration:0.1f scale:scale2_per_size[currentSize]],
+     [CCScaleTo actionWithDuration:0.2f scale:scale_per_size[currentSize]],
+     [CCCallFunc actionWithTarget:self selector:@selector(cleanMovingBlock)], nil] ];
+
+     
+}
+
+- (void) dropWithBlock:(TouchableSprite *)block
+{
+    [block runAction: [CCSequence actions:
+                       [CCScaleTo actionWithDuration:0.1f scale:scale2_per_size[currentSize]],
+                       [CCScaleTo actionWithDuration:0.2f scale:scale_per_size[currentSize]],
+                       [CCCallFunc actionWithTarget:self selector:@selector(cleanMovingBlock2)], nil] ];
+}
+
+
+
 -(void) createMovingBlock: (TouchableSprite *)block {
     if(movingBlock){ 
     	NSLog(@"assert(false)!!!");
     	return; 
     }
-
-    movingBlock = [TouchableSprite spriteWithFile:@"red-3.png"];
+    [self genNewBlock:block.colorIndex withPosition:[block position]];
     
-    movingBlock.position = [block position];
-    [movingBlock setTextureRect:CGRectMake(0,0,cellSize,cellSize)];
-    //movingBlock.color = [block color];
+     movingBlock = newBlock;
+    
     [self addChild:movingBlock z:Z_BLOCK_MOVING];
 }
 
 -(void) createUsedBlock:(CGRect)rect
 {
 
-    TouchableSprite *sprite = [TouchableSprite spriteWithFile:@"red-3.png"];
+    [self genNewBlock:movingBlock.colorIndex withPosition:rect.origin];
+    TouchableSprite *block = newBlock;
+    newBlock = nil;
     
-    sprite.position = rect.origin;
-    [sprite setTextureRect:CGRectMake(0,0,cellSize,cellSize)];
-    //sprite.color = [movingBlock color];
-    [self addChild:sprite z:Z_BLOCK_MOVING];
-    [usedBlocks addObject:sprite];
+
+    
+    [self addChild:block z:Z_BLOCK_MOVING];
+    [usedBlocks addObject:block];
     [self removeChild:movingBlock cleanup:true];
-    movingBlock = nil;
+
+    [self dropWithBlock:block];
+
 }
 
 - (CGRect) destRect: (CGPoint) point {
@@ -356,22 +409,15 @@ float qDistance(CGPoint p1, CGPoint p2){
 
 }
 
--(void) addMapNode:(CGRect) rect withColor:(ccColor3B)cc
+-(void) addMapNode:(CGRect) rect withColor:(int)c
 {
     int x = (rect.origin.x - offsetX) / cellSize;
     int y = (rect.origin.y - offsetY) / cellSize;
     NSString *pos = [NSString stringWithFormat:@"%d_%d", x,y];
 
-    for(int i = 0; i < 5; i++)
-    {
-        ccColor3B c = colors[i];
-        if(c.r == cc.r && c.g == cc.g && c.b == cc.b){
-            [[currentMap objectForKey:pos] setValue:[NSNumber numberWithInt:i] forKey:@"now"];
-            NSLog(@"ad %@ %d\n", pos, i);
-            return;
 
-        }
-    }
+    [[currentMap objectForKey:pos] setValue:[NSNumber numberWithInt:c] forKey:@"now"];
+    //NSLog(@"ad %@ %d\n", pos, c);
 }
 
 -(CCParticleExplosion*) getEffect {
@@ -390,6 +436,7 @@ float qDistance(CGPoint p1, CGPoint p2){
 	[node setPosition:ccp(sz.width/2, sz.height/2)];
 
 }
+
 
 /* Process touch events */
 -(void) ccTouchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
@@ -419,6 +466,8 @@ float qDistance(CGPoint p1, CGPoint p2){
 }
 
 -(void) ccTouchesMoved:(NSSet *)touches withEvent:(UIEvent *)event {
+    if(!movingBlock) return;
+    
 	UITouch *touch = [touches anyObject];
 	CGPoint point = [touch locationInView: [touch view]];
 	point = [[CCDirector sharedDirector] convertToGL: point];
@@ -437,22 +486,22 @@ float qDistance(CGPoint p1, CGPoint p2){
     }
 }
 
--(void) ccTouchesEnded:(NSSet *)touches withEvent:(UIEvent *)event {
+-(void) ccTouchesEnded:(NSSet *)touches withEvent:(UIEvent *)event
+{
 	UITouch *touch = [touches anyObject];
 	CGPoint point = [touch locationInView: [touch view]];
 	point = [[CCDirector sharedDirector] convertToGL: point];
 	
-	//Process input for all sprites
-if([movingBlock isTouchedState]) {
-   [movingBlock ccTouchesEnded:touches withEvent:event];
-    if(pointIsInRect(point, padRect)){
-      bool overlap = NO;
-      CGRect rect = [self destRect:point];
-
-        if([self getChildByTag:TAG_SHADOW]){
-           [self removeChildByTag:TAG_SHADOW cleanup:YES];
-        }
-
+    if(movingBlock) {
+        [movingBlock ccTouchesEnded:touches withEvent:event];
+        if(pointIsInRect(point, padRect)){
+            bool overlap = NO;
+            CGRect rect = [self destRect:point];
+            
+            if([self getChildByTag:TAG_SHADOW]){
+                [self removeChildByTag:TAG_SHADOW cleanup:YES];
+            }
+            
             for(id sprite in usedBlocks){
                 if(CGPointEqualToPoint([ sprite position], rect.origin) ){
                     overlap = YES;
@@ -460,30 +509,18 @@ if([movingBlock isTouchedState]) {
                 }
             }
             if(!overlap) {
-              [self addMapNode:rect withColor:movingBlock.color];
-              [self createUsedBlock:rect];
+                [self addMapNode:rect withColor:movingBlock.colorIndex];
+                [self createUsedBlock:rect];
             } else {
-              //animate
-              [self removeChild:movingBlock cleanup:true];
-              movingBlock = nil;
+                [self backWithBlock];
             }
-
-
-        // show drop animate
-        // update data
-        // win?
-    } else {
-        //   dispear animatemovingBlock
-          [self removeChild:movingBlock cleanup:true];
-          movingBlock = nil;
-    }
-
-      if([self isWin]) {
-        // show animate
-        // menu, play again, play another
-          [self playWin];
-
-      }
+            
+        } else {
+            [self backWithBlock];
+        }
+        if([self isWin]) {
+            [self playWin];
+        }
     }
 }
 

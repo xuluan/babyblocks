@@ -11,6 +11,7 @@
 }
 
 @property (readwrite, assign) int touchedState;
+@property (readwrite, assign) int colorIndex;
 
 -(id) init;
 -(CGRect) rect;
