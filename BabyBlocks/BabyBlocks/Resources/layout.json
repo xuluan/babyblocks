@@ -1,11 +1,11 @@
 { 
 
-	"3": { "cell_pic":"grid75.png", "offset_x":"94", "offset_y":"152", "interval":"80", "cell_size":"80", "border_width":"76", "line_width":"4" },
+	"3": { "pad":"pad-3.png", "offset_x":"94", "offset_y":"152", "cell_size":"80", "border_width":"38", "line_width":"2" },
 
-    "5": { "cell_pic":"grid50.png", "offset_x":"62", "offset_y":"120", "interval":"50", "cell_size":"60", "border_width":"76", "line_width":"4" },
+    "5": { "pad":"pad-5.png", "offset_x":"62", "offset_y":"120", "cell_size":"60", "border_width":"38", "line_width":"2" },
 
-    "7": { "cell_pic":"grid50.png", "offset_x":"35", "offset_y":"94", "interval":"50", "cell_size":"50", "border_width":"76", "line_width":"4" },
+    "7": { "pad":"pad-7.png", "offset_x":"35", "offset_y":"94", "cell_size":"50", "border_width":"38", "line_width":"2" },
  
-    "9": { "cell_pic":"grid40.png", "offset_x":"28", "offset_y":"86", "interval":"40", "cell_size":"40", "border_width":"76", "line_width":"4" }
+    "9": { "pad":"pad-9.png", "offset_x":"28", "offset_y":"86", "cell_size":"40", "border_width":"38", "line_width":"2" }
    
 }

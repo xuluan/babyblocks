@@ -31,10 +31,10 @@ static ccColor3B colors[] = {
     {0,255,0},  // green
     {0,0,255},   //blue
     {255,127,0},  //orange
-    {127,127,127}  //shadow
+    {200,200,100}  //shadow
    
 };
-/*
+
 static NSString* colors_name[] = {
 	@"red",   // red
     @"yellow", // yellow
@@ -44,15 +44,7 @@ static NSString* colors_name[] = {
     @"shadow"  //shadow
     
 };
-*/
-static NSString* colors_name[] = {
-	@"red",   // red
-    @"red", // yellow
-    @"red",  // green
-    @"red",   //blue
-    @"red",  //orange
-    @"shadow"  //shadow
-};
+
 
 static float scale_per_size[] = { 0.0, 0.0, 0.0, 1.0, 0.0, 0.75, 0.0, 0.625, 0.0, 0.0, 0.5 };
 static float scale2_per_size[] = { 0.0, 0.0, 0.0, 1.2, 0.0, 0.9, 0.0, 0.7, 0.0, 0.0, 0.6 };
@@ -152,7 +144,7 @@ float qDistance(CGPoint p1, CGPoint p2){
     NSDictionary *dict = [[CJSONDeserializer deserializer] deserializeAsDictionary:jsonData error:nil];
     NSString *usingSize = [NSString stringWithFormat:@"%d",currentSize];
     currentLayout = [dict objectForKey:usingSize];
-    cellSize = [[currentLayout objectForKey:@"interval"] intValue];
+    cellSize = [[currentLayout objectForKey:@"cell_size"] intValue];
 
     offsetX = [[currentLayout objectForKey:@"offset_x"] intValue];
     offsetY = [[currentLayout objectForKey:@"offset_y"] intValue];
@@ -164,14 +156,18 @@ float qDistance(CGPoint p1, CGPoint p2){
     offsetX1 = offsetX + borderWidth + (interval+lineWidth)/2;
     offsetY1 = offsetY + borderWidth + (interval+lineWidth)/2;
     offsetX2 = offsetX1 + screenSize.width/2;
-    offsetX2 = offsetY1;
+    offsetY2 = offsetY1;
+
+    padRect = CGRectMake(offsetX2-interval/2, offsetY2,
+        interval*currentSize, interval*currentSize);
+
 }
 
 -(void) genNewBlock:(int) color withPosition: (CGPoint) point
 {
     NSString* file = [NSString stringWithFormat:@"%@.png", colors_name[color]];
     newBlock = [TouchableSprite spriteWithFile:file];
-    //[newBlock setScale:scale_per_size[currentSize]];
+    [newBlock setScale:scale_per_size[currentSize]];
     newBlock.position = point;
     newBlock.colorIndex = color;
 }
@@ -188,36 +184,22 @@ float qDistance(CGPoint p1, CGPoint p2){
     }
 }
 
--(void) drawPad:(int) offset {    
-/*    
-    int offset_x = [[currentLayout objectForKey:@"offset_x"] intValue];
-    int offset_y = [[currentLayout objectForKey:@"offset_y"] intValue];
-    int interval = [[currentLayout objectForKey:@"interval"] intValue];
-
-    if(offset > 0) {
-        offsetX = offset + offset_x;
-        offsetX2 = offset_x;
-        cellSize = interval;
-        offsetY = offset_y;
-        padRect = CGRectMake(offsetX - cellSize/2, offsetY, cellSize * currentSize, cellSize * currentSize);
-    }
-
-    for(int x=0; x<currentSize; x++){
-        for(int y=0; y<currentSize; y++){
-            
-            CCSprite *sprite = [CCSprite spriteWithFile:[currentLayout objectForKey:@"cell_pic"]];
-            sprite.position = ccp(x*interval+offset+offset_x,y*interval+offset_y);
-
-            sprite.color = ccc3(200,200,200);
-
-            [self addChild:sprite];
-        }
-    }
-*/
-    NSString *pad = [NSString stringWithFormat:@"pad-%d.png",currentSize];
-    CCSprite *sprite = [CCSprite spriteWithFile:pad];
+-(void) drawPad:(int) offset
+{
+    CCSprite *sprite = [CCSprite spriteWithFile:[currentLayout objectForKey:@"pad"]];
     sprite.position = ccp(positionX + offset, positionY);
-    [self addChild:sprite z:Z_BG];    
+    [self addChild:sprite z:Z_LAYER];
+    if(offset)
+    {
+        /*
+        float scaleMod = 1.0f;
+        float w = [self contentSize].width * [self scale] * scaleMod;
+        float h = [self contentSize].height * [self scale] * scaleMod;
+        CGPoint point = CGPointMake([self position].x - (w/2), [self position].y - (h/2));
+        
+        return CGRectMake(point.x, point.y, w, h);
+        */
+    }
 }
 
 -(void)drawMap:(id)node
@@ -227,7 +209,7 @@ float qDistance(CGPoint p1, CGPoint p2){
     int c = [[node objectForKey:@"c"] intValue];
     NSString *pos = [NSString stringWithFormat:@"%d_%d", x,y];
     
-    [self genNewBlock:c withPosition:ccp(offsetX1+x*interval, offsetY+y*interval)];
+    [self genNewBlock:c withPosition:ccp(offsetX1+x*interval, offsetY1+y*interval)];
 
     [self addChild:newBlock z:Z_BLOCK];
     [[currentMap objectForKey:pos] setValue:[NSNumber numberWithInt:c] forKey:@"exp"];
@@ -284,19 +266,7 @@ float qDistance(CGPoint p1, CGPoint p2){
     CCSprite *sprite = [CCSprite spriteWithFile:@"bg.png"];
     sprite.position = ccp(screenSize.width/2, screenSize.height/2);
     [sprite setTextureRect:CGRectMake(0,0,screenSize.width,screenSize.height)];
-     [self addChild:sprite z:Z_BG];
-    /*
-    CGRect repeatRect = CGRectMake(-5000, -5000, 5000, 5000);
-    CCSprite* sprite = [CCSprite spriteWithFile:@"bg.png" rect:repeatRect];
-    ccTexParams params ={
-        GL_LINEAR,
-        GL_LINEAR,
-        GL_REPEAT,
-        GL_REPEAT
-    };
-    [sprite.texture setTexParameters:&params];
     [self addChild:sprite z:Z_BG];
-  */
 }
 
 - (void) nextLevel
@@ -391,7 +361,7 @@ float qDistance(CGPoint p1, CGPoint p2){
     [self addChild:movingBlock z:Z_BLOCK_MOVING];
 }
 
--(void) createUsedBlock:(createUsedBlock)pos
+-(void) createUsedBlock:(CGPoint)pos
 {
 
     [self genNewBlock:movingBlock.colorIndex withPosition:pos];
@@ -407,10 +377,11 @@ float qDistance(CGPoint p1, CGPoint p2){
 }
 
 - (CGPoint) destPosition: (CGPoint) point {
-	int x = ((int)point.x + cellSize/2 - offsetX)/cellSize;
-	int y = ((int)point.y - offsetY)/cellSize;
+    
+	int x = ((int)point.x + interval/2 - offsetX2)/interval;
+	int y = ((int)point.y - offsetY2)/interval;
 
-    return ccp(offsetX2+x*cellSize,offsetY2+y*cellSize);
+    return ccp(offsetX2+x*interval,offsetY2+y*interval);
 }
 
 -(void) addShadow:(CGPoint)point
@@ -432,10 +403,10 @@ float qDistance(CGPoint p1, CGPoint p2){
 
 }
 
--(void) addMapNode:(CGPoint) pos withColor:(int)c
+-(void) addMapNode:(CGPoint) position withColor:(int)c
 {
-    int x = (pos.x - offsetX2) / interval;
-    int y = (pos.y - offsetY2) / interval;
+    int x = (position.x - offsetX2) / interval;
+    int y = (position.y - offsetY2) / interval;
     NSString *pos = [NSString stringWithFormat:@"%d_%d", x,y];
 
 

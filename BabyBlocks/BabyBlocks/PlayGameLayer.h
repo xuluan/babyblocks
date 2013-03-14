@@ -16,6 +16,7 @@
     NSMutableArray *usedBlocks;
     TouchableSprite *movingBlock;
     TouchableSprite *newBlock;
+    TouchableSprite *pad;
     CCSprite *shadow;
 
     int currentSize;
@@ -60,8 +61,7 @@
 -(bool) isWin;
 
 - (void) dealloc;
--(void) createUsedBlock:(CGRect)rect;
-- (CGRect) destRect: (CGPoint) point;
+- (void) createUsedBlock:(CGPoint)pos;
 -(void) addShadow:(CGPoint)point;
 -(void) ccTouchesBegan:(NSSet *)touches withEvent:(UIEvent *)event;
 -(void) ccTouchesMoved:(NSSet *)touches withEvent:(UIEvent *)event;

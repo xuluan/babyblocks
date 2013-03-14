@@ -83,7 +83,7 @@ extern void saveSettings(NSDictionary *dictionary);
         CCMenuItemFont* size5 = [CCMenuItemFont itemFromString:@"5 X 5" target:self selector:@selector(setSize5)];
         CCMenuItemFont* size7 = [CCMenuItemFont itemFromString:@"7 X 7" target:self selector:@selector(setSize7)];
         CCMenuItemFont* size9 = [CCMenuItemFont itemFromString:@"9 X 9" target:self selector:@selector(setSize9)];
-        sizeToChoose = [CCMenu menuWithItems:size3, size7, size10, nil];
+        sizeToChoose = [CCMenu menuWithItems:size3, size5, size7, size9, nil];
         [sizeToChoose alignItemsVertically];
         sizeToChoose.position = center;
         sizeToChoose.visible = NO;
