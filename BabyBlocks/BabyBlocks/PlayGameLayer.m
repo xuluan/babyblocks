@@ -46,8 +46,8 @@ static NSString* colors_name[] = {
 };
 
 
-static float scale_per_size[] = { 0.0, 0.0, 0.0, 1.0, 0.0, 0.75, 0.0, 0.625, 0.0, 0.0, 0.5 };
-static float scale2_per_size[] = { 0.0, 0.0, 0.0, 1.2, 0.0, 0.9, 0.0, 0.7, 0.0, 0.0, 0.6 };
+static float scale_per_size[] = { 0.0, 0.0, 0.0, 1.0, 0.0, 0.75, 0.0, 0.625, 0.0, 0.5, 0.5 };
+static float scale2_per_size[] = { 0.0, 0.0, 0.0, 1.2, 0.0, 0.9, 0.0, 0.7, 0.0, 0.6, 0.6 };
 
 bool pointIsInRect(CGPoint p, CGRect r){
 	bool isInRect = false;
@@ -250,12 +250,57 @@ float qDistance(CGPoint p1, CGPoint p2){
 
 -(void) drawIcon
 {
-    //quit
+    //home
+    CCMenuItemSprite *prevItem = [CCMenuItemSprite itemFromNormalSprite:[CCSprite spriteWithFile:@"prev.png"]
+                                                         selectedSprite:[CCSprite spriteWithFile:@"prev.png"]
+                                                         disabledSprite:[CCSprite spriteWithFile:@"prev.png"]
+                                                                 target:self selector:@selector(quit:)];
+    
+    
+    CCMenu *prev = [CCMenu menuWithItems: prevItem, nil];
+    prev.position = ccp(70, screenSize.height - 100);
+    [self addChild:prev z:Z_ICON];
+    
+    //home
+    CCMenuItemSprite *homeItem = [CCMenuItemSprite itemFromNormalSprite:[CCSprite spriteWithFile:@"home.png"]
+                            selectedSprite:[CCSprite spriteWithFile:@"home.png"]
+                            disabledSprite:[CCSprite spriteWithFile:@"home.png"]
+                            target:self selector:@selector(quit:)];
+    
+    
+    CCMenu *home = [CCMenu menuWithItems: homeItem, nil];
+    home.position = ccp(160, screenSize.height - 100);
+    [self addChild:home z:Z_ICON];
+    
+    //next
+    CCMenuItemSprite *nextItem = [CCMenuItemSprite itemFromNormalSprite:[CCSprite spriteWithFile:@"next.png"]
+                                                         selectedSprite:[CCSprite spriteWithFile:@"next.png"]
+                                                         disabledSprite:[CCSprite spriteWithFile:@"next.png"]
+                                                                 target:self selector:@selector(quit:)];
+    
+    
+    CCMenu *next = [CCMenu menuWithItems: nextItem, nil];
+    next.position = ccp(950, screenSize.height - 100);
+    [self addChild:next z:Z_ICON];
+    
+    
+    //help
+    CCMenuItemSprite *helpItem = [CCMenuItemSprite itemFromNormalSprite:[CCSprite spriteWithFile:@"help.png"]
+                                                         selectedSprite:[CCSprite spriteWithFile:@"help.png"]
+                                                         disabledSprite:[CCSprite spriteWithFile:@"help.png"]
+                                                                 target:self selector:@selector(quit:)];
+    
+    
+    CCMenu *help = [CCMenu menuWithItems: helpItem, nil];
+    help.position = ccp(850, screenSize.height - 100);
+    [self addChild:help z:Z_ICON];
+    
+    /*
     CCMenuItemFont *quitItem = [CCMenuItemFont itemFromString:@"Quit" target:self selector:@selector(quit:)];
     CCMenu *menu = [CCMenu menuWithItems: quitItem, nil];
     menu.position = ccp(100, screenSize.height - 75);
     [self addChild:menu z:Z_ICON];    
-
+*/
     //next
     //prev
     //hind
@@ -420,7 +465,7 @@ float qDistance(CGPoint p1, CGPoint p2){
 -(void) playWin {
 	NSString *method = [NSString stringWithFormat:@"getEffect"];
 	CCParticleSystem *node = [self performSelector:NSSelectorFromString(method)];
-    node.life = 0.2;
+    node.life = 1.5;
     node.autoRemoveOnFinish = YES;
 	[self addChild:node z:1 tag:TAG_EFFECT_NODE];
 	[node setPosition:ccp(screenSize.width/2, screenSize.height/2)];
