@@ -22,12 +22,21 @@
     int currentLevel;
     int currentMaxLevel;
 
+    int lineWidth;
+    int borderWidth;
+    int interval;
+
     int cellSize;
     int offsetX;
     int offsetY;
+    int positionX;
+    int positionY;    
+    int offsetX1;
+    int offsetY1;
     int offsetX2;
+    int offsetY2;    
     CGRect padRect;
-
+    CGSize screenSize;
 
     NSDictionary *currentLayout;
     NSMutableDictionary* currentMap;

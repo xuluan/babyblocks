@@ -88,6 +88,7 @@ float qDistance(CGPoint p1, CGPoint p2){
 
 -(id) initWithSettings:(NSMutableDictionary *)settings
 {
+    screenSize = [[CCDirector sharedDirector] winSize];
     currentSettings = settings;
     NSLog(@"settings %@\n", settings);
     NSLog(@"current %@\n", currentSettings);
@@ -112,8 +113,8 @@ float qDistance(CGPoint p1, CGPoint p2){
         [self initReadyBox];
 
         //draw pad
-        //[self drawPad:(sz.width/2)];
-        //[self drawPad:(0)];
+        [self drawPad:(screenSize.width/2)];
+        [self drawPad:(0)];
         
 		//Load level, draw map and update map data
 		[self loadLevel];
@@ -153,13 +154,24 @@ float qDistance(CGPoint p1, CGPoint p2){
     currentLayout = [dict objectForKey:usingSize];
     cellSize = [[currentLayout objectForKey:@"interval"] intValue];
 
+    offsetX = [[currentLayout objectForKey:@"offset_x"] intValue];
+    offsetY = [[currentLayout objectForKey:@"offset_y"] intValue];
+    lineWidth = [[currentLayout objectForKey:@"line_width"] intValue];    
+    borderWidth = [[currentLayout objectForKey:@"border_width"] intValue];    
+    interval = lineWidth + cellSize;
+    positionX = offsetX + borderWidth + (currentSize*interval+lineWidth)/2;
+    positionY = offsetY + borderWidth + (currentSize*interval+lineWidth)/2;
+    offsetX1 = offsetX + borderWidth + (interval+lineWidth)/2;
+    offsetY1 = offsetY + borderWidth + (interval+lineWidth)/2;
+    offsetX2 = offsetX1 + screenSize.width/2;
+    offsetX2 = offsetY1;
 }
 
 -(void) genNewBlock:(int) color withPosition: (CGPoint) point
 {
     NSString* file = [NSString stringWithFormat:@"%@.png", colors_name[color]];
     newBlock = [TouchableSprite spriteWithFile:file];
-    [newBlock setScale:scale_per_size[currentSize]];
+    //[newBlock setScale:scale_per_size[currentSize]];
     newBlock.position = point;
     newBlock.colorIndex = color;
 }
@@ -167,10 +179,9 @@ float qDistance(CGPoint p1, CGPoint p2){
 -(void) initReadyBox {
     readyBlocks = [[NSMutableArray alloc] init];
     usedBlocks = [[NSMutableArray alloc] init];
-    CGSize size = [[CCDirector sharedDirector] winSize];
     
     for(int x=0; x<5; x++){
-        [self genNewBlock:x withPosition:ccp(x*100+300, size.height-75)];
+        [self genNewBlock:x withPosition:ccp(x*100+300, screenSize.height-100)];
         [self addChild:newBlock z:Z_BLOCK];
         [readyBlocks addObject:newBlock];
         
@@ -178,7 +189,7 @@ float qDistance(CGPoint p1, CGPoint p2){
 }
 
 -(void) drawPad:(int) offset {    
-    
+/*    
     int offset_x = [[currentLayout objectForKey:@"offset_x"] intValue];
     int offset_y = [[currentLayout objectForKey:@"offset_y"] intValue];
     int interval = [[currentLayout objectForKey:@"interval"] intValue];
@@ -202,6 +213,11 @@ float qDistance(CGPoint p1, CGPoint p2){
             [self addChild:sprite];
         }
     }
+*/
+    NSString *pad = [NSString stringWithFormat:@"pad-%d.png",currentSize];
+    CCSprite *sprite = [CCSprite spriteWithFile:pad];
+    sprite.position = ccp(positionX + offset, positionY);
+    [self addChild:sprite z:Z_BG];    
 }
 
 -(void)drawMap:(id)node
@@ -211,7 +227,7 @@ float qDistance(CGPoint p1, CGPoint p2){
     int c = [[node objectForKey:@"c"] intValue];
     NSString *pos = [NSString stringWithFormat:@"%d_%d", x,y];
     
-    [self genNewBlock:c withPosition:ccp(offsetX2+x*cellSize, offsetY+y*cellSize)];
+    [self genNewBlock:c withPosition:ccp(offsetX1+x*interval, offsetY+y*interval)];
 
     [self addChild:newBlock z:Z_BLOCK];
     [[currentMap objectForKey:pos] setValue:[NSNumber numberWithInt:c] forKey:@"exp"];
@@ -252,24 +268,23 @@ float qDistance(CGPoint p1, CGPoint p2){
 
 -(void) drawIcon
 {
-    CGSize sz = [[CCDirector sharedDirector] winSize];
+    //quit
     CCMenuItemFont *quitItem = [CCMenuItemFont itemFromString:@"Quit" target:self selector:@selector(quit:)];
     CCMenu *menu = [CCMenu menuWithItems: quitItem, nil];
-    menu.position = ccp(100, sz.height - 75);
+    menu.position = ccp(100, screenSize.height - 75);
     [self addChild:menu z:Z_ICON];    
+
+    //next
+    //prev
+    //hind
 }
 
 -(void) drawBG
 {
-
-    CGSize sz = [[CCDirector sharedDirector] winSize];
-
     CCSprite *sprite = [CCSprite spriteWithFile:@"bg.png"];
-    
-    sprite.position = ccp(sz.width/2, sz.height/2);
-    [sprite setTextureRect:CGRectMake(0,0,sz.width,sz.height)];
-    //sprite.color = ccc3(150,150,200);
-    [self addChild:sprite z:Z_BG];
+    sprite.position = ccp(screenSize.width/2, screenSize.height/2);
+    [sprite setTextureRect:CGRectMake(0,0,screenSize.width,screenSize.height)];
+     [self addChild:sprite z:Z_BG];
     /*
     CGRect repeatRect = CGRectMake(-5000, -5000, 5000, 5000);
     CCSprite* sprite = [CCSprite spriteWithFile:@"bg.png" rect:repeatRect];
@@ -376,14 +391,12 @@ float qDistance(CGPoint p1, CGPoint p2){
     [self addChild:movingBlock z:Z_BLOCK_MOVING];
 }
 
--(void) createUsedBlock:(CGRect)rect
+-(void) createUsedBlock:(createUsedBlock)pos
 {
 
-    [self genNewBlock:movingBlock.colorIndex withPosition:rect.origin];
+    [self genNewBlock:movingBlock.colorIndex withPosition:pos];
     TouchableSprite *block = newBlock;
     newBlock = nil;
-    
-
     
     [self addChild:block z:Z_BLOCK_MOVING];
     [usedBlocks addObject:block];
@@ -393,17 +406,16 @@ float qDistance(CGPoint p1, CGPoint p2){
 
 }
 
-- (CGRect) destRect: (CGPoint) point {
+- (CGPoint) destPosition: (CGPoint) point {
 	int x = ((int)point.x + cellSize/2 - offsetX)/cellSize;
 	int y = ((int)point.y - offsetY)/cellSize;
 
-	return CGRectMake(offsetX+x*cellSize,offsetY+y*cellSize, offsetX+(x+1)*cellSize-1, offsetY+(y+1)*cellSize-1);
+    return ccp(offsetX2+x*cellSize,offsetY2+y*cellSize);
 }
 
 -(void) addShadow:(CGPoint)point
 {
     shadow = [CCSprite spriteWithFile:@"blank.png"];
-    shadow.position = ccp(0, 0);
     [shadow setTextureRect:CGRectMake(0,0,cellSize,cellSize)];
     shadow.color = colors[5];
     shadow.position = point;
@@ -420,10 +432,10 @@ float qDistance(CGPoint p1, CGPoint p2){
 
 }
 
--(void) addMapNode:(CGRect) rect withColor:(int)c
+-(void) addMapNode:(CGPoint) pos withColor:(int)c
 {
-    int x = (rect.origin.x - offsetX) / cellSize;
-    int y = (rect.origin.y - offsetY) / cellSize;
+    int x = (pos.x - offsetX2) / interval;
+    int y = (pos.y - offsetY2) / interval;
     NSString *pos = [NSString stringWithFormat:@"%d_%d", x,y];
 
 
@@ -435,17 +447,12 @@ float qDistance(CGPoint p1, CGPoint p2){
 	return [CCParticleExplosion node];
 }
 -(void) playWin {
-
 	NSString *method = [NSString stringWithFormat:@"getEffect"];
 	CCParticleSystem *node = [self performSelector:NSSelectorFromString(method)];
     node.life = 0.2;
     node.autoRemoveOnFinish = YES;
-    
 	[self addChild:node z:1 tag:TAG_EFFECT_NODE];
-    CGSize sz = [[CCDirector sharedDirector] winSize];
-
-	[node setPosition:ccp(sz.width/2, sz.height/2)];
-
+	[node setPosition:ccp(screenSize.width/2, screenSize.height/2)];
 }
 
 
@@ -491,8 +498,8 @@ float qDistance(CGPoint p1, CGPoint p2){
         [movingBlock ccTouchesMoved:touches withEvent:event];
         // show shadow
       if(pointIsInRect(point, padRect)){
-        CGRect rect = [self destRect:point];
-          [self addShadow:rect.origin];
+        CGPoint pos = [self destPosition:point];
+          [self addShadow:pos];
       }
     }
 }
@@ -507,21 +514,21 @@ float qDistance(CGPoint p1, CGPoint p2){
         [movingBlock ccTouchesEnded:touches withEvent:event];
         if(pointIsInRect(point, padRect)){
             bool overlap = NO;
-            CGRect rect = [self destRect:point];
+            CGPoint pos = [self destPosition:point];
             
             if([self getChildByTag:TAG_SHADOW]){
                 [self removeChildByTag:TAG_SHADOW cleanup:YES];
             }
             
             for(id sprite in usedBlocks){
-                if(CGPointEqualToPoint([ sprite position], rect.origin) ){
+                if(CGPointEqualToPoint([ sprite position], pos) ){
                     overlap = YES;
                     break;
                 }
             }
             if(!overlap) {
-                [self addMapNode:rect withColor:movingBlock.colorIndex];
-                [self createUsedBlock:rect];
+                [self addMapNode:pos withColor:movingBlock.colorIndex];
+                [self createUsedBlock:pos];
             } else {
                 [self backWithBlock];
             }

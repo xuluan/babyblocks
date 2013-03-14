@@ -80,8 +80,9 @@ extern void saveSettings(NSDictionary *dictionary);
 
 
         CCMenuItemFont* size3 = [CCMenuItemFont itemFromString:@"3 X 3" target:self selector:@selector(setSize3)];
+        CCMenuItemFont* size5 = [CCMenuItemFont itemFromString:@"5 X 5" target:self selector:@selector(setSize5)];
         CCMenuItemFont* size7 = [CCMenuItemFont itemFromString:@"7 X 7" target:self selector:@selector(setSize7)];
-        CCMenuItemFont* size10 = [CCMenuItemFont itemFromString:@"10 X 10" target:self selector:@selector(setSize10)];
+        CCMenuItemFont* size9 = [CCMenuItemFont itemFromString:@"9 X 9" target:self selector:@selector(setSize9)];
         sizeToChoose = [CCMenu menuWithItems:size3, size7, size10, nil];
         [sizeToChoose alignItemsVertically];
         sizeToChoose.position = center;
@@ -139,9 +140,9 @@ extern void saveSettings(NSDictionary *dictionary);
 }
 
 -(void) setSize3 { [self setSize:3]; }
+-(void) setSize5 { [self setSize:5]; }
 -(void) setSize7 { [self setSize:7]; }
--(void) setSize10 { [self setSize:10]; }
-
+-(void) setSize9 { [self setSize:9]; }
 -(void) exit {
     exit(0);
 }

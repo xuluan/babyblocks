@@ -1,11 +1,13 @@
 { 
 
-	"current_size": "7",
+	"current_size": "5",
 
 	"3": { "max_level":"10", "current_level":"1" },
 
+	"5": { "max_level":"10", "current_level":"1" },
+
     "7": { "max_level":"10", "current_level":"1" },
  
-    "10": { "max_level":"10", "current_level":"1" },
+    "9": { "max_level":"10", "current_level":"1" },
    
 }
