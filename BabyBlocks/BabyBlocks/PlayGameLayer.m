@@ -88,7 +88,6 @@ float qDistance(CGPoint p1, CGPoint p2){
 
 -(id) initWithSettings:(NSMutableDictionary *)settings
 {
-    CGSize sz = [[CCDirector sharedDirector] winSize];
     currentSettings = settings;
     NSLog(@"settings %@\n", settings);
     NSLog(@"current %@\n", currentSettings);
@@ -113,8 +112,8 @@ float qDistance(CGPoint p1, CGPoint p2){
         [self initReadyBox];
 
         //draw pad
-        [self drawPad:(sz.width/2)];
-        [self drawPad:(0)];
+        //[self drawPad:(sz.width/2)];
+        //[self drawPad:(0)];
         
 		//Load level, draw map and update map data
 		[self loadLevel];
@@ -262,16 +261,28 @@ float qDistance(CGPoint p1, CGPoint p2){
 
 -(void) drawBG
 {
+
     CGSize sz = [[CCDirector sharedDirector] winSize];
 
-    CCSprite *sprite = [CCSprite spriteWithFile:@"blank.png"];
+    CCSprite *sprite = [CCSprite spriteWithFile:@"bg.png"];
     
     sprite.position = ccp(sz.width/2, sz.height/2);
     [sprite setTextureRect:CGRectMake(0,0,sz.width,sz.height)];
-    sprite.color = ccc3(150,150,200);
+    //sprite.color = ccc3(150,150,200);
     [self addChild:sprite z:Z_BG];
-  
-  }
+    /*
+    CGRect repeatRect = CGRectMake(-5000, -5000, 5000, 5000);
+    CCSprite* sprite = [CCSprite spriteWithFile:@"bg.png" rect:repeatRect];
+    ccTexParams params ={
+        GL_LINEAR,
+        GL_LINEAR,
+        GL_REPEAT,
+        GL_REPEAT
+    };
+    [sprite.texture setTexParameters:&params];
+    [self addChild:sprite z:Z_BG];
+  */
+}
 
 - (void) nextLevel
 {

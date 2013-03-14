@@ -141,6 +141,7 @@
 		A9CF737916E7776400547D09 /* red.png in Resources */ = {isa = PBXBuildFile; fileRef = A9CF737716E7776400547D09 /* red.png */; };
 		A9CF737A16E7776400547D09 /* settings.json in Resources */ = {isa = PBXBuildFile; fileRef = A9CF737816E7776400547D09 /* settings.json */; };
 		A9CF737C16E7792100547D09 /* red-3.png in Resources */ = {isa = PBXBuildFile; fileRef = A9CF737B16E7792100547D09 /* red-3.png */; };
+		A9E53CE116EE1C3D0048178D /* bg.png in Resources */ = {isa = PBXBuildFile; fileRef = A9E53CE016EE1C3D0048178D /* bg.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXBuildRule section */
@@ -412,6 +413,7 @@
 		A9CF737716E7776400547D09 /* red.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = red.png; path = BabyBlocks/Resources/red.png; sourceTree = "<group>"; };
 		A9CF737816E7776400547D09 /* settings.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = settings.json; path = BabyBlocks/Resources/settings.json; sourceTree = "<group>"; };
 		A9CF737B16E7792100547D09 /* red-3.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "red-3.png"; path = "Resources/red-3.png"; sourceTree = "<group>"; };
+		A9E53CE016EE1C3D0048178D /* bg.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = bg.png; path = Resources/bg.png; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -482,6 +484,7 @@
 				A98872F916DCBD0C00478258 /* PlayGameLayer.h */,
 				A937C2EC16E19430001B01D6 /* TouchableSprite.m */,
 				A98872FA16DCBD0C00478258 /* PlayGameLayer.m */,
+				A9E53CE016EE1C3D0048178D /* bg.png */,
 				A98873E216DDC07100478258 /* TouchableSprite.h */,
 				A99D1EB416E8E7640012781B /* MainMenuLayer.m */,
 				A99A896516D8A90800C29688 /* GameConfig.h */,
@@ -909,6 +912,7 @@
 				A9CF737916E7776400547D09 /* red.png in Resources */,
 				A9CF737A16E7776400547D09 /* settings.json in Resources */,
 				A9CF737C16E7792100547D09 /* red-3.png in Resources */,
+				A9E53CE116EE1C3D0048178D /* bg.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
