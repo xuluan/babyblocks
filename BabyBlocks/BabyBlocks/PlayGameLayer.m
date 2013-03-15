@@ -35,7 +35,7 @@ static ccColor3B colors[] = {
     {0,255,0},  // green
     {0,0,255},   //blue
     {255,127,0},  //orange
-    {200,200,100}  //shadow
+    {100,100,100}  //shadow
    
 };
 
@@ -293,7 +293,7 @@ float qDistance(CGPoint p1, CGPoint p2){
     CCMenuItemSprite *helpItem = [CCMenuItemSprite itemFromNormalSprite:[CCSprite spriteWithFile:@"help.png"]
                                                          selectedSprite:[CCSprite spriteWithFile:@"help.png"]
                                                          disabledSprite:[CCSprite spriteWithFile:@"help.png"]
-                                                                 target:self selector:@selector(help:)];
+                                                                 target:self selector:@selector(quit:)];
     
     
     CCMenu *help = [CCMenu menuWithItems: helpItem, nil];
@@ -453,6 +453,7 @@ float qDistance(CGPoint p1, CGPoint p2){
     shadow = [CCSprite spriteWithFile:@"blank.png"];
     [shadow setTextureRect:CGRectMake(0,0,cellSize,cellSize)];
     shadow.color = colors[5];
+    shadow.opacity = 100;
     shadow.position = point;
     [self addChild:shadow z:Z_SHADOW tag:TAG_SHADOW];
 }
@@ -461,9 +462,13 @@ float qDistance(CGPoint p1, CGPoint p2){
 {
     int x = (position.x - offsetX2) / interval;
     int y = (position.y - offsetY2) / interval;
-    NSString *pos = [NSString stringWithFormat:@"%d_%d", x,y];
-    [[currentMap objectForKey:pos] setValue:nil forKey:@"now"];
-    NSLog(@"rm %d %d\n",x, y);
+    if( x>=0 && x<currentSize && y>=0 && y<currentSize)
+    {
+        NSString *pos = [NSString stringWithFormat:@"%d_%d", x,y];
+        [[currentMap objectForKey:pos] setValue:nil forKey:@"now"];
+        NSLog(@"rm %d %d\n",x, y);
+    }
+
 
 }
 
