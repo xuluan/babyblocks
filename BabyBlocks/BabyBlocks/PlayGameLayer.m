@@ -25,6 +25,10 @@ enum {
     TAG_EFFECT_NODE = 2000
 };
 
+enum {
+    S_BUSY = 1000,
+    S_FREE = 2000
+};
 static ccColor3B colors[] = {
 	{255,0,0},   // red
     {255,255,0}, // yellow
@@ -175,6 +179,7 @@ float qDistance(CGPoint p1, CGPoint p2){
 -(void) initReadyBox {
     readyBlocks = [[NSMutableArray alloc] init];
     usedBlocks = [[NSMutableArray alloc] init];
+    hintBlocks = [[NSMutableArray alloc] init];
     
     for(int x=0; x<5; x++){
         [self genNewBlock:x withPosition:ccp(x*100+300, screenSize.height-100)];
@@ -288,7 +293,7 @@ float qDistance(CGPoint p1, CGPoint p2){
     CCMenuItemSprite *helpItem = [CCMenuItemSprite itemFromNormalSprite:[CCSprite spriteWithFile:@"help.png"]
                                                          selectedSprite:[CCSprite spriteWithFile:@"help.png"]
                                                          disabledSprite:[CCSprite spriteWithFile:@"help.png"]
-                                                                 target:self selector:@selector(quit:)];
+                                                                 target:self selector:@selector(help:)];
     
     
     CCMenu *help = [CCMenu menuWithItems: helpItem, nil];
@@ -334,6 +339,21 @@ float qDistance(CGPoint p1, CGPoint p2){
     [self removeAllChildrenWithCleanup:YES];
 
 	[super dealloc];
+}
+
+- (void) help
+{
+    for(int x=0; x<currentSize; x++){
+        for(int y=0; y<currentSize; y++){
+            NSString *pos = [NSString stringWithFormat:@"%d_%d", x,y];
+            NSMutableDictionary* node = [currentMap objectForKey:pos];
+            if([node objectForKey:@"exp"] != [node objectForKey:@"now"]) {
+                //show wrong symbol in [x,y] for 5 seconds
+
+            }
+
+        }
+    }
 }
 
 - (bool) isWin
@@ -400,10 +420,9 @@ float qDistance(CGPoint p1, CGPoint p2){
     	return; 
     }
     [self genNewBlock:block.colorIndex withPosition:[block position]];
-    
-     movingBlock = newBlock;
-    
+    movingBlock = newBlock;
     [self addChild:movingBlock z:Z_BLOCK_MOVING];
+    [self removeMapNode:[block position]];
 }
 
 -(void) createUsedBlock:(CGPoint)pos
@@ -440,8 +459,8 @@ float qDistance(CGPoint p1, CGPoint p2){
 
 -(void) removeMapNode:(CGPoint) position
 {
-    int x = (position.x - offsetX) / cellSize;
-    int y = (position.y - offsetY) / cellSize;
+    int x = (position.x - offsetX2) / interval;
+    int y = (position.y - offsetY2) / interval;
     NSString *pos = [NSString stringWithFormat:@"%d_%d", x,y];
     [[currentMap objectForKey:pos] setValue:nil forKey:@"now"];
     NSLog(@"rm %d %d\n",x, y);
@@ -465,7 +484,7 @@ float qDistance(CGPoint p1, CGPoint p2){
 -(void) playWin {
 	NSString *method = [NSString stringWithFormat:@"getEffect"];
 	CCParticleSystem *node = [self performSelector:NSSelectorFromString(method)];
-    node.life = 1.5;
+    node.life = 3;
     node.autoRemoveOnFinish = YES;
 	[self addChild:node z:1 tag:TAG_EFFECT_NODE];
 	[node setPosition:ccp(screenSize.width/2, screenSize.height/2)];
@@ -491,9 +510,8 @@ float qDistance(CGPoint p1, CGPoint p2){
 	for(id sprite in usedBlocks){
 		if(pointIsInRect(point, [sprite rect])){
             [self createMovingBlock:sprite];
-            [self removeMapNode:[sprite position]];
-            [self removeChild:sprite cleanup:true];
             [usedBlocks removeObject:sprite];
+            [self removeChild:sprite cleanup:true];
 			return;
 		}
 	}

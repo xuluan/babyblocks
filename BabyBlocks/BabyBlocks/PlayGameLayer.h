@@ -19,6 +19,11 @@
     TouchableSprite *pad;
     CCSprite *shadow;
 
+    NSMutableArray *hintBlocks;
+
+    int status;
+
+
     int currentSize;
     int currentLevel;
     int currentMaxLevel;
