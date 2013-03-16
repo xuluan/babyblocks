@@ -12,12 +12,13 @@
 
 
 enum {
-	Z_BG = -1,
-	Z_LAYER = 0,
-	Z_ICON = 2,
-	Z_BLOCK = 5,
-	Z_SHADOW = 8,
-	Z_BLOCK_MOVING = 10
+	Z_BG = 0,
+	Z_LAYER = 10,
+	Z_ICON = 20,
+	Z_BLOCK = 30,
+	Z_SHADOW = 40,
+	Z_BLOCK_MOVING = 50,
+    Z_HINT = 60    
 };
 
 enum {
@@ -97,6 +98,7 @@ float qDistance(CGPoint p1, CGPoint p2){
 
 	if( (self=[super init] )) {
         self.isTouchEnabled = YES;
+        currentStatus = S_FREE;
         movingBlock = nil;
 
         //init map data 
@@ -293,7 +295,7 @@ float qDistance(CGPoint p1, CGPoint p2){
     CCMenuItemSprite *helpItem = [CCMenuItemSprite itemFromNormalSprite:[CCSprite spriteWithFile:@"help.png"]
                                                          selectedSprite:[CCSprite spriteWithFile:@"help.png"]
                                                          disabledSprite:[CCSprite spriteWithFile:@"help.png"]
-                                                                 target:self selector:@selector(quit:)];
+                                                                 target:self selector:@selector(help:)];
     
     
     CCMenu *help = [CCMenu menuWithItems: helpItem, nil];
@@ -316,8 +318,20 @@ float qDistance(CGPoint p1, CGPoint p2){
     CCSprite *sprite = [CCSprite spriteWithFile:@"bg.png"];
     sprite.position = ccp(screenSize.width/2, screenSize.height/2);
     [sprite setTextureRect:CGRectMake(0,0,screenSize.width,screenSize.height)];
+/*/
+  CGRect repeatRect = CGRectMake(-5000, -5000, 5000, 5000);
+    CCSprite* sprite = [CCSprite spriteWithFile:@"bg1.png" rect:repeatRect];
+    ccTexParams params ={
+        GL_LINEAR,
+        GL_LINEAR,
+        GL_REPEAT,
+        GL_REPEAT
+    };
+    [sprite.texture setTexParameters:&params];
+ */
     [self addChild:sprite z:Z_BG];
-}
+    bgSprite = sprite;
+  }
 
 - (void) nextLevel
 {
@@ -341,19 +355,44 @@ float qDistance(CGPoint p1, CGPoint p2){
 	[super dealloc];
 }
 
-- (void) help
+-(void) genHintBlock:(CGPoint) point
 {
+    CCSprite * hint = [CCSprite spriteWithFile:@"wrong.png"];
+    hint.position = point;
+    [hintBlocks addObject:hint];
+    [self addChild:hint z:Z_HINT];
+}
+
+- (void) cleanHintBlocks
+{
+	for(id sprite in hintBlocks){
+        [self removeChild:sprite cleanup:true];
+	}
+    [hintBlocks release];
+    hintBlocks = [[NSMutableArray alloc] init];
+
+    currentStatus = S_FREE;
+}
+
+- (void) help:(id)sender
+{
+    currentStatus = S_BUSY;
     for(int x=0; x<currentSize; x++){
         for(int y=0; y<currentSize; y++){
             NSString *pos = [NSString stringWithFormat:@"%d_%d", x,y];
             NSMutableDictionary* node = [currentMap objectForKey:pos];
             if([node objectForKey:@"exp"] != [node objectForKey:@"now"]) {
                 //show wrong symbol in [x,y] for 5 seconds
-
+                [self genHintBlock:ccp(x*interval+offsetX2, y*interval + offsetY2)];
             }
 
         }
     }
+    
+    [bgSprite runAction: [CCSequence actions:[CCDelayTime actionWithDuration:5],
+                             [CCCallFunc actionWithTarget:self selector:@selector(cleanHintBlocks)], nil] ];
+    
+    
 }
 
 - (bool) isWin
@@ -499,7 +538,8 @@ float qDistance(CGPoint p1, CGPoint p2){
 /* Process touch events */
 -(void) ccTouchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
 	if(movingBlock){ return; }
-
+    if(currentStatus != S_FREE) {return;}
+    
 	UITouch *touch = [touches anyObject];
 	CGPoint point = [touch locationInView: [touch view]];
 	point = [[CCDirector sharedDirector] convertToGL: point];

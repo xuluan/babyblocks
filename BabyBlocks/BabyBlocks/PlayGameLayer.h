@@ -18,10 +18,11 @@
     TouchableSprite *newBlock;
     TouchableSprite *pad;
     CCSprite *shadow;
+    CCSprite *bgSprite;
 
     NSMutableArray *hintBlocks;
 
-    int status;
+    int currentStatus;
 
 
     int currentSize;
@@ -60,13 +61,14 @@
 -(void) drawPad:(int) offset;
 -(void)drawMap:(id)node;
 -(void) loadLevel;
+-(void) help:(id) sender;
 -(void) quit:(id)sender;
 -(void) drawIcon;
 -(void) drawBG;
 -(bool) isWin;
-
-- (void) dealloc;
-- (void) createUsedBlock:(CGPoint)pos;
+-(void) removeMapNode:(CGPoint) position;
+-(void) dealloc;
+-(void) createUsedBlock:(CGPoint)pos;
 -(void) addShadow:(CGPoint)point;
 -(void) ccTouchesBegan:(NSSet *)touches withEvent:(UIEvent *)event;
 -(void) ccTouchesMoved:(NSSet *)touches withEvent:(UIEvent *)event;
