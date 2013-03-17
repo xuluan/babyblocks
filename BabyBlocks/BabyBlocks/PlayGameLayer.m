@@ -159,7 +159,7 @@ float qDistance(CGPoint p1, CGPoint p2){
     offsetX2 = offsetX1 + screenSize.width/2;
     offsetY2 = offsetY1;
 
-    padRect = CGRectMake(offsetX2-interval/2, offsetY2,
+    padRect = CGRectMake(offsetX2-interval/2, offsetY2-interval/4,
         interval*currentSize, interval*currentSize);
 
 }
@@ -421,9 +421,8 @@ float qDistance(CGPoint p1, CGPoint p2){
     NSString *size_key = [NSString stringWithFormat:@"%d", currentSize];
     NSLog(@"%@\n", [currentSettings objectForKey:size_key]);
     NSDictionary *dict = [currentSettings objectForKey:size_key];
-    [currentSettings removeObjectForKey:size_key];
     NSMutableDictionary *level = [[NSMutableDictionary alloc ] initWithDictionary:dict];
-
+    [currentSettings removeObjectForKey:size_key];
     [level setValue:[NSNumber numberWithInt:currentLevel] forKey:@"current_level"];
     [currentSettings setObject:level forKey:size_key];
     NSLog(@"%@\n", currentSettings);
@@ -539,7 +538,7 @@ float qDistance(CGPoint p1, CGPoint p2){
 - (CGPoint) destPosition: (CGPoint) point {
     
 	int x = ((int)point.x + interval/2 - offsetX2)/interval;
-	int y = ((int)point.y - offsetY2)/interval;
+	int y = ((int)point.y - offsetY2+ interval/4)/interval;
 
     return ccp(offsetX2+x*interval,offsetY2+y*interval);
 }

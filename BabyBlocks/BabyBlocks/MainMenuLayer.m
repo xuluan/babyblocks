@@ -55,14 +55,12 @@ extern void saveSettings(NSDictionary *dictionary);
         NSDictionary *dict = loadSettings();
         
         currentSettings = [[NSMutableDictionary alloc ] initWithDictionary:dict];
-
-        NSLog(@"currentSettings %@", currentSettings);
         
         currentSize = [[currentSettings objectForKey:@"current_size"] intValue];
         NSString *size_key = [NSString stringWithFormat:@"%d", currentSize];
         currentLevel = [[[currentSettings objectForKey:size_key] objectForKey:@"current_level"] intValue];
         
-        NSLog(@"aa currentLevel %d, currentSize %d \n",currentLevel, currentSize);
+        //NSLog(@"aa currentLevel %d, currentSize %d \n",currentLevel, currentSize);
         
         
         CCMenuItemFont* startGameMIF = [CCMenuItemFont itemFromString:@"START GAME" target:self selector:@selector(startGame)];
@@ -113,8 +111,6 @@ extern void saveSettings(NSDictionary *dictionary);
 
 -(void) startGame
 {
-    NSLog(@"currentSettings %@\n", currentSettings);
-
     [[CCDirector sharedDirector] pushScene:[PlayGameLayer sceneWithSettings:currentSettings]];
 }
 
@@ -125,16 +121,8 @@ extern void saveSettings(NSDictionary *dictionary);
 
 -(void) setSize:(int)n {
 	currentSize = n;
-    
-    NSLog(@"currentSettings %@ %d\n", currentSettings, [[currentSettings objectForKey:@"current_size"] intValue]);
-    
-
-
-    
 	[currentSettings setValue:[NSNumber numberWithInt:n] forKey:@"current_size"];
 	saveSettings(currentSettings);
-    NSLog(@"currentSettings %@\n", currentSettings);
-
 	mainMenu.visible = YES;
 	sizeToChoose.visible = NO;
 }

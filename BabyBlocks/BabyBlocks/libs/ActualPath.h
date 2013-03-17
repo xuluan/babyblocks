@@ -25,14 +25,27 @@ NSDictionary* loadSettings()
 }
 
 void saveSettings(NSDictionary *dictionary) {
-    NSLog(@"save start\n");
+    
+    NSError *error = NULL;
+    NSData *jsonData = [[CJSONSerializer serializer] serializeObject:dictionary error:&error];
+    if(error){
+        NSLog(@"json save error %@\n", error);
+    }
+    NSString * dir =getActualPath(@"settings.json");
 
-	//NSData *jsonData = [[CJSONDeserializer serializer] serializeObject:dictionary error:nil];
-    NSData *jsonData = [[CJSONSerializer serializer] serializeObject:dictionary error:nil];
- 
-    NSString *jsonString = [[NSString alloc] initWithData:jsonData  encoding:NSUTF32BigEndianStringEncoding];
+    
+    //NSString *str = [[NSString alloc] initWithContentsOfFile:dir encoding:NSUTF8StringEncoding error:nil];
+    //NSLog(@"str %@\n", str);
 
-    [jsonString writeToFile:getActualPath(@"settings.json") atomically:YES encoding:NSUTF8StringEncoding error:nil];
-    NSLog(@"save end\n");
+    NSString *jsonString = [[NSString alloc] initWithData:jsonData  encoding:NSUTF8StringEncoding];
+    
+    //NSString *jsonString = [[NSString alloc] initWithString:@"test"];
+
+
+    [jsonString writeToFile:dir atomically:YES encoding:NSUTF8StringEncoding error:nil];
+    
+    //str = [[NSString alloc] initWithContentsOfFile:dir encoding:NSUTF8StringEncoding error:nil];
+    //NSLog(@"json %@ write %@, read %@\n", dir, jsonString, str);
+
 
 }

@@ -63,6 +63,12 @@
 -(void) loadLevel;
 -(void) help:(id) sender;
 -(void) quit:(id)sender;
+-(void) next:(id)sender;
+-(void) prev:(id)sender;
+
+-(void) nextLevel;
+-(void) prevLevel;
+
 -(void) drawIcon;
 -(void) drawBG;
 -(bool) isWin;
