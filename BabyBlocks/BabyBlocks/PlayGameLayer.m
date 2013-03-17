@@ -85,29 +85,21 @@ float qDistance(CGPoint p1, CGPoint p2){
 
 - (void) createLevel
 {
-
-    NSLog(@"createLevel\n");
     movingBlock = nil;
     
     //init map data
     [self initMap];
-    NSLog(@"createLevel1\n");
     //load layout settings according to currentSize
     [self loadLayout];
-    NSLog(@"createLevel2\n");
     //init and draw readyBlocks
     [self initReadyBox];
-    NSLog(@"createLevel3\n");
     //draw pad
     [self drawPad:(screenSize.width/2)];
     [self drawPad:(0)];
-    NSLog(@"createLevel4\n");
     //Load level, draw map and update map data
     [self loadLevel];
-    NSLog(@"createLevel5\n");
     //Quit button, prev, next, hint, ...
     [self drawIcon];
-    NSLog(@"createLevel6\n");
     //draw background
     [self drawBG];
 }
@@ -116,16 +108,11 @@ float qDistance(CGPoint p1, CGPoint p2){
 {
     screenSize = [[CCDirector sharedDirector] winSize];
     currentSettings = settings;
-    NSLog(@"settings %@\n", settings);
-    NSLog(@"current %@\n", currentSettings);
+
     currentSize = [[currentSettings objectForKey:@"current_size"] intValue];
     NSString *size_key = [NSString stringWithFormat:@"%d", currentSize];
     currentLevel = [[[currentSettings objectForKey:size_key] objectForKey:@"current_level"] intValue];
     currentMaxLevel = [[[currentSettings objectForKey:size_key] objectForKey:@"max_level"] intValue];
-    
-    NSLog(@"currentLevel %d, currentSize %d \n",currentLevel, currentSize);
-    
-
     
 	if( (self=[super init] )) {
         self.isTouchEnabled = YES;
@@ -267,13 +254,21 @@ float qDistance(CGPoint p1, CGPoint p2){
     [[CCTextureCache sharedTextureCache] removeAllTextures];
 }
 
+-(void) next:(id)sender {
+    [self nextLevel];
+}
+
+-(void) prev:(id)sender {
+    [self prevLevel];
+}
+
 -(void) drawIcon
 {
-    //home
+    //prev
     CCMenuItemSprite *prevItem = [CCMenuItemSprite itemFromNormalSprite:[CCSprite spriteWithFile:@"prev.png"]
                                                          selectedSprite:[CCSprite spriteWithFile:@"prev.png"]
                                                          disabledSprite:[CCSprite spriteWithFile:@"prev.png"]
-                                                                 target:self selector:@selector(quit:)];
+                                                                 target:self selector:@selector(prev:)];
     
     
     CCMenu *prev = [CCMenu menuWithItems: prevItem, nil];
@@ -295,7 +290,7 @@ float qDistance(CGPoint p1, CGPoint p2){
     CCMenuItemSprite *nextItem = [CCMenuItemSprite itemFromNormalSprite:[CCSprite spriteWithFile:@"next.png"]
                                                          selectedSprite:[CCSprite spriteWithFile:@"next.png"]
                                                          disabledSprite:[CCSprite spriteWithFile:@"next.png"]
-                                                                 target:self selector:@selector(quit:)];
+                                                                 target:self selector:@selector(next:)];
     
     
     CCMenu *next = [CCMenu menuWithItems: nextItem, nil];
@@ -314,15 +309,6 @@ float qDistance(CGPoint p1, CGPoint p2){
     help.position = ccp(850, screenSize.height - 100);
     [self addChild:help z:Z_ICON];
     
-    /*
-    CCMenuItemFont *quitItem = [CCMenuItemFont itemFromString:@"Quit" target:self selector:@selector(quit:)];
-    CCMenu *menu = [CCMenu menuWithItems: quitItem, nil];
-    menu.position = ccp(100, screenSize.height - 75);
-    [self addChild:menu z:Z_ICON];    
-*/
-    //next
-    //prev
-    //hind
 }
 
 -(void) drawBG
@@ -350,7 +336,7 @@ float qDistance(CGPoint p1, CGPoint p2){
 {
     [readyBlocks release];
     [usedBlocks release];
-    //TODO: why release it crash? [currentLayout release];
+    //[currentLayout release];
     [movingBlock release];
 	
     [self removeAllChildrenWithCleanup:YES];
@@ -402,16 +388,48 @@ float qDistance(CGPoint p1, CGPoint p2){
     
     
 }
+- prevLevel
+{
+    currentStatus = S_BUSY;
+    currentLevel = (currentLevel == 1) ?  currentMaxLevel:currentLevel-1;
+    
+    NSString *size_key = [NSString stringWithFormat:@"%d", currentSize];
+    NSLog(@"%@\n", [currentSettings objectForKey:size_key]);
+    NSDictionary *dict = [currentSettings objectForKey:size_key];
+    [currentSettings removeObjectForKey:size_key];
+    NSMutableDictionary *level = [[NSMutableDictionary alloc ] initWithDictionary:dict];
+    
+    [level setValue:[NSNumber numberWithInt:currentLevel] forKey:@"current_level"];
+    [currentSettings setObject:level forKey:size_key];
+    NSLog(@"%@\n", currentSettings);
+    
+    
+    saveSettings(currentSettings);
+    [self cleanLevel];
+    NSLog(@"nextlevel\n");
+    [self createLevel];
+    
+    currentStatus = S_FREE;
+}
 
 - (void) nextLevel
 {
+    currentStatus = S_BUSY;
 
     currentLevel = (currentLevel == currentMaxLevel) ? 1:currentLevel+1;
-    /*
+
     NSString *size_key = [NSString stringWithFormat:@"%d", currentSize];
-    [[currentSettings objectForKey:size_key] setValue:[NSNumber numberWithInt:currentLevel] forKey:@"current_level"];
+    NSLog(@"%@\n", [currentSettings objectForKey:size_key]);
+    NSDictionary *dict = [currentSettings objectForKey:size_key];
+    [currentSettings removeObjectForKey:size_key];
+    NSMutableDictionary *level = [[NSMutableDictionary alloc ] initWithDictionary:dict];
+
+    [level setValue:[NSNumber numberWithInt:currentLevel] forKey:@"current_level"];
+    [currentSettings setObject:level forKey:size_key];
+    NSLog(@"%@\n", currentSettings);
+
+
     saveSettings(currentSettings);
-        /*/
     [self cleanLevel];
     NSLog(@"nextlevel\n");
     [self createLevel];
