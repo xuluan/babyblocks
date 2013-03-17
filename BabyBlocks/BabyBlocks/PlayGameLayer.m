@@ -36,7 +36,8 @@ static ccColor3B colors[] = {
     {0,255,0},  // green
     {0,0,255},   //blue
     {255,127,0},  //orange
-    {100,100,100}  //shadow
+    {100,100,100},  //shadow
+    {200,200,200}  //pad
    
 };
 
@@ -82,6 +83,34 @@ float qDistance(CGPoint p1, CGPoint p2){
 	return s;
 }
 
+- (void) createLevel
+{
+
+    NSLog(@"createLevel\n");
+    movingBlock = nil;
+    
+    //init map data
+    [self initMap];
+    NSLog(@"createLevel1\n");
+    //load layout settings according to currentSize
+    [self loadLayout];
+    NSLog(@"createLevel2\n");
+    //init and draw readyBlocks
+    [self initReadyBox];
+    NSLog(@"createLevel3\n");
+    //draw pad
+    [self drawPad:(screenSize.width/2)];
+    [self drawPad:(0)];
+    NSLog(@"createLevel4\n");
+    //Load level, draw map and update map data
+    [self loadLevel];
+    NSLog(@"createLevel5\n");
+    //Quit button, prev, next, hint, ...
+    [self drawIcon];
+    NSLog(@"createLevel6\n");
+    //draw background
+    [self drawBG];
+}
 
 -(id) initWithSettings:(NSMutableDictionary *)settings
 {
@@ -95,34 +124,13 @@ float qDistance(CGPoint p1, CGPoint p2){
     currentMaxLevel = [[[currentSettings objectForKey:size_key] objectForKey:@"max_level"] intValue];
     
     NSLog(@"currentLevel %d, currentSize %d \n",currentLevel, currentSize);
+    
 
+    
 	if( (self=[super init] )) {
         self.isTouchEnabled = YES;
         currentStatus = S_FREE;
-        movingBlock = nil;
-
-        //init map data 
-        [self initMap];
-
-        //load layout settings according to currentSize
-        [self loadLayout];
-        
-        //init and draw readyBlocks
-        [self initReadyBox];
-
-        //draw pad
-        [self drawPad:(screenSize.width/2)];
-        [self drawPad:(0)];
-        
-		//Load level, draw map and update map data
-		[self loadLevel];
-
-		//Quit button, prev, next, hint, ...
-        [self drawIcon];
-
-        //draw background
-        [self drawBG];
-
+        [self createLevel];
 	}
 	return self;
 }
@@ -195,6 +203,8 @@ float qDistance(CGPoint p1, CGPoint p2){
 {
     CCSprite *sprite = [CCSprite spriteWithFile:[currentLayout objectForKey:@"pad"]];
     sprite.position = ccp(positionX + offset, positionY);
+    sprite.color = ccc3(150,150,50);
+    sprite.opacity = 100;
     [self addChild:sprite z:Z_LAYER];
     if(offset)
     {
@@ -215,6 +225,7 @@ float qDistance(CGPoint p1, CGPoint p2){
     int y = [[node objectForKey:@"y"] intValue];
     int c = [[node objectForKey:@"c"] intValue];
     NSString *pos = [NSString stringWithFormat:@"%d_%d", x,y];
+    NSLog(@"draw map node: %@, %d\n", pos, currentLevel);
     
     [self genNewBlock:c withPosition:ccp(offsetX1+x*interval, offsetY1+y*interval)];
 
@@ -231,6 +242,7 @@ float qDistance(CGPoint p1, CGPoint p2){
     NSDictionary *dict = [[CJSONDeserializer deserializer] deserializeAsDictionary:jsonData error:nil];
     
     NSArray *map = [dict objectForKey:@"map"];
+    NSLog(@"loaclevel map node: %@, %d\n", str, currentLevel);
 
     for (id node in map) {
         [self drawMap:node];
@@ -333,24 +345,20 @@ float qDistance(CGPoint p1, CGPoint p2){
     bgSprite = sprite;
   }
 
-- (void) nextLevel
+
+-(void) cleanLevel
 {
-    currentLevel = (currentLevel == currentMaxLevel) ? 1:currentLevel+1;
-
-    NSString *size_key = [NSString stringWithFormat:@"%d", currentSize];
-    [[currentSettings objectForKey:size_key] setValue:[NSNumber numberWithInt:currentLevel] forKey:@"current_level"];
-    saveSettings(currentSettings);
-
+    [readyBlocks release];
+    [usedBlocks release];
+    //TODO: why release it crash? [currentLayout release];
+    [movingBlock release];
+	
+    [self removeAllChildrenWithCleanup:YES];
 }
 
 - (void) dealloc
 {
-    [readyBlocks release];
-    [usedBlocks release];
-    [currentLayout release];
-    [movingBlock release];
-	
-    [self removeAllChildrenWithCleanup:YES];
+    [self cleanLevel];
 
 	[super dealloc];
 }
@@ -395,6 +403,23 @@ float qDistance(CGPoint p1, CGPoint p2){
     
 }
 
+- (void) nextLevel
+{
+
+    currentLevel = (currentLevel == currentMaxLevel) ? 1:currentLevel+1;
+    /*
+    NSString *size_key = [NSString stringWithFormat:@"%d", currentSize];
+    [[currentSettings objectForKey:size_key] setValue:[NSNumber numberWithInt:currentLevel] forKey:@"current_level"];
+    saveSettings(currentSettings);
+        /*/
+    [self cleanLevel];
+    NSLog(@"nextlevel\n");
+    [self createLevel];
+     
+    currentStatus = S_FREE;
+
+}
+
 - (bool) isWin
 {
     for (NSString* key in currentMap) {
@@ -408,6 +433,20 @@ float qDistance(CGPoint p1, CGPoint p2){
     
     NSLog(@"GOOD\n");
     return YES;
+}
+
+-(void) playWin {
+    currentStatus = S_BUSY;
+	NSString *method = [NSString stringWithFormat:@"getEffect"];
+	CCParticleSystem *node = [self performSelector:NSSelectorFromString(method)];
+    node.life = 3;
+    node.autoRemoveOnFinish = YES;
+	[self addChild:node z:1 tag:TAG_EFFECT_NODE];
+	[node setPosition:ccp(screenSize.width/2, screenSize.height/2)];
+    
+    [bgSprite runAction: [CCSequence actions:[CCDelayTime actionWithDuration:5],
+                          [CCCallFunc actionWithTarget:self selector:@selector(nextLevel)], nil] ];
+    
 }
 
 - (void) cleanMovingBlock
@@ -525,18 +564,12 @@ float qDistance(CGPoint p1, CGPoint p2){
 -(CCParticleExplosion*) getEffect {
 	return [CCParticleExplosion node];
 }
--(void) playWin {
-	NSString *method = [NSString stringWithFormat:@"getEffect"];
-	CCParticleSystem *node = [self performSelector:NSSelectorFromString(method)];
-    node.life = 3;
-    node.autoRemoveOnFinish = YES;
-	[self addChild:node z:1 tag:TAG_EFFECT_NODE];
-	[node setPosition:ccp(screenSize.width/2, screenSize.height/2)];
-}
+
 
 
 /* Process touch events */
 -(void) ccTouchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
+    NSLog(@"current status %d\n", currentStatus);
 	if(movingBlock){ return; }
     if(currentStatus != S_FREE) {return;}
     
