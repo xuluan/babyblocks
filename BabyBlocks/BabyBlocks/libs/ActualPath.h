@@ -10,11 +10,36 @@ NSString* getActualPath( NSString* file )
 	return actualPath;
 }
 
+BOOL initial_settings
+{
+    BOOL success;
+    NSFileManager* fileManager = [NSFileManager defaultManager]; 
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+    NSString *documentsDirectory = [paths objectAtIndex:0];
+    NSString *writableDBPath = [documentsDirectory stringByAppendingPathComponent:@"settings.json"];
+    success = [fileManager fileExistsAtPath:writableDBPath];
+    if (success) return success;
+    // The writable database does not exist, so copy the default to the appropriate location.
+    NSString *defaultDBPath = getActualPath(@"settings.json");
+
+    success = [fileManager copyItemAtPath:defaultDBPath toPath:writableDBPath error:&error]; 
+    
+    return success;
+}
+
 NSDictionary* loadSettings()
 {
     NSLog(@"LOAD start\n");
+    BOOL success = initial_settings();
+    if(!success) {
+        NSLog(@"initial_settings fail\n");
+        return nil;
+    }
 
-    NSString *jsonString = [[NSString alloc] initWithContentsOfFile:getActualPath(@"settings.json") encoding:NSUTF8StringEncoding error:nil];
+    NSString *path = [documentsDirectory stringByAppendingPathComponent:@"settings.json"];
+
+
+    NSString *jsonString = [[NSString alloc] initWithContentsOfFile:path encoding:NSUTF8StringEncoding error:nil];
     NSData *jsonData = [jsonString dataUsingEncoding:NSUTF32BigEndianStringEncoding];
     NSDictionary* dict =  [[CJSONDeserializer deserializer] deserializeAsDictionary:jsonData error:nil];
     
@@ -31,7 +56,7 @@ void saveSettings(NSDictionary *dictionary) {
     if(error){
         NSLog(@"json save error %@\n", error);
     }
-    NSString * dir =getActualPath(@"settings.json");
+    NSString *path = [documentsDirectory stringByAppendingPathComponent:@"settings.json"];
 
     
     //NSString *str = [[NSString alloc] initWithContentsOfFile:dir encoding:NSUTF8StringEncoding error:nil];
@@ -42,7 +67,7 @@ void saveSettings(NSDictionary *dictionary) {
     //NSString *jsonString = [[NSString alloc] initWithString:@"test"];
 
 
-    [jsonString writeToFile:dir atomically:YES encoding:NSUTF8StringEncoding error:nil];
+    [jsonString writeToFile:path atomically:YES encoding:NSUTF8StringEncoding error:nil];
     
     //str = [[NSString alloc] initWithContentsOfFile:dir encoding:NSUTF8StringEncoding error:nil];
     //NSLog(@"json %@ write %@, read %@\n", dir, jsonString, str);
