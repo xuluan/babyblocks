@@ -18,7 +18,8 @@
     TouchableSprite *newBlock;
     TouchableSprite *pad;
     CCSprite *shadow;
-    CCSprite *bgSprite;
+
+    NSMutableDictionary *soundSources;
 
     NSMutableArray *hintBlocks;
 

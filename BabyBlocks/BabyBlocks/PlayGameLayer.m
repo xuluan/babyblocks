@@ -9,6 +9,7 @@
 #import "PlayGameLayer.h"
 #import "CJSONDeserializer.h"
 #import "ActualPath.h"
+#import "SimpleAudioEngine.h"
 
 
 enum {
@@ -117,7 +118,9 @@ float qDistance(CGPoint p1, CGPoint p2){
 	if( (self=[super init] )) {
         self.isTouchEnabled = YES;
         currentStatus = S_FREE;
+        //[self initSounds];
         [self createLevel];
+
 	}
 	return self;
 }
@@ -328,9 +331,41 @@ float qDistance(CGPoint p1, CGPoint p2){
     [sprite.texture setTexParameters:&params];
  */
     [self addChild:sprite z:Z_BG];
-    bgSprite = sprite;
-  }
+}
 
+
+-(CDSoundSource*) loadSoundEffect:(NSString*)fn {
+    //Pre-load sound
+    [sae preloadEffect:fn];
+
+    //Init sound
+    CDSoundSource *sound = [[sae soundSourceForFile:fn] retain];
+    
+    //Add sound to container
+    [soundSources setObject:sound forKey:fn];
+    
+    return sound;
+}
+
+
+-(void) initSounds
+{
+    [[CDAudioManager sharedManager] setResignBehavior:kAMRBStopPlay autoHandle:YES];
+    soundSources = [[NSMutableDictionary alloc] init];
+    [self loadSoundEffect:@"crazy_chimp.caf"];
+
+
+}  
+
+-(void) cleanSounds
+{
+    for(id s in soundSources){
+        //Release source
+        CDSoundSource *source = [soundSources objectForKey:s];
+        [source release];
+    }
+    [soundSources release];
+}
 
 -(void) cleanLevel
 {
@@ -345,6 +380,7 @@ float qDistance(CGPoint p1, CGPoint p2){
 - (void) dealloc
 {
     [self cleanLevel];
+    //[self cleanSounds];
 
 	[super dealloc];
 }
@@ -383,7 +419,7 @@ float qDistance(CGPoint p1, CGPoint p2){
         }
     }
     
-    [bgSprite runAction: [CCSequence actions:[CCDelayTime actionWithDuration:5],
+    [self runAction: [CCSequence actions:[CCDelayTime actionWithDuration:5],
                              [CCCallFunc actionWithTarget:self selector:@selector(cleanHintBlocks)], nil] ];
     
     
@@ -461,7 +497,7 @@ float qDistance(CGPoint p1, CGPoint p2){
 	[self addChild:node z:1 tag:TAG_EFFECT_NODE];
 	[node setPosition:ccp(screenSize.width/2, screenSize.height/2)];
     
-    [bgSprite runAction: [CCSequence actions:[CCDelayTime actionWithDuration:5],
+    [self runAction: [CCSequence actions:[CCDelayTime actionWithDuration:5],
                           [CCCallFunc actionWithTarget:self selector:@selector(nextLevel)], nil] ];
     
 }
