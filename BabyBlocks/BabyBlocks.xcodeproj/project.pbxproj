@@ -43,6 +43,9 @@
 		A96C5CA716E4F80600B20DA0 /* fire.png in Resources */ = {isa = PBXBuildFile; fileRef = A96C5CA616E4F80600B20DA0 /* fire.png */; };
 		A98872FB16DCBD0C00478258 /* PlayGameLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = A98872FA16DCBD0C00478258 /* PlayGameLayer.m */; };
 		A98873D716DCEB8600478258 /* blank.png in Resources */ = {isa = PBXBuildFile; fileRef = A98873D516DCEB8600478258 /* blank.png */; };
+		A990B64016F739D100F81DE2 /* back.caf in Resources */ = {isa = PBXBuildFile; fileRef = A990B63F16F739D100F81DE2 /* back.caf */; };
+		A990B64216F73BE400F81DE2 /* right.caf in Resources */ = {isa = PBXBuildFile; fileRef = A990B64116F73BE400F81DE2 /* right.caf */; };
+		A990B64416F73D0400F81DE2 /* wrong.caf in Resources */ = {isa = PBXBuildFile; fileRef = A990B64316F73D0400F81DE2 /* wrong.caf */; };
 		A991E04916D928F0002C9F54 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = A991E04816D928F0002C9F54 /* Default-568h@2x.png */; };
 		A99A87FB16D8A90600C29688 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A99A87FA16D8A90600C29688 /* QuartzCore.framework */; };
 		A99A87FD16D8A90600C29688 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A99A87FC16D8A90600C29688 /* OpenGLES.framework */; };
@@ -235,6 +238,9 @@
 		A98873D516DCEB8600478258 /* blank.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = blank.png; path = Resources/blank.png; sourceTree = "<group>"; };
 		A98873E116DDA0F100478258 /* ActualPath.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ActualPath.h; path = libs/ActualPath.h; sourceTree = "<group>"; };
 		A98873E216DDC07100478258 /* TouchableSprite.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TouchableSprite.h; path = libs/TouchableSprite.h; sourceTree = "<group>"; };
+		A990B63F16F739D100F81DE2 /* back.caf */ = {isa = PBXFileReference; lastKnownFileType = file; path = back.caf; sourceTree = "<group>"; };
+		A990B64116F73BE400F81DE2 /* right.caf */ = {isa = PBXFileReference; lastKnownFileType = file; path = right.caf; sourceTree = "<group>"; };
+		A990B64316F73D0400F81DE2 /* wrong.caf */ = {isa = PBXFileReference; lastKnownFileType = file; path = wrong.caf; sourceTree = "<group>"; };
 		A991E04816D928F0002C9F54 /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Default-568h@2x.png"; path = "../Default-568h@2x.png"; sourceTree = "<group>"; };
 		A99A87F716D8A90600C29688 /* BabyBlocks.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BabyBlocks.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A99A87FA16D8A90600C29688 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
@@ -513,6 +519,16 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		A990B63E16F739D100F81DE2 /* sounds */ = {
+			isa = PBXGroup;
+			children = (
+				A990B64316F73D0400F81DE2 /* wrong.caf */,
+				A990B64116F73BE400F81DE2 /* right.caf */,
+				A990B63F16F739D100F81DE2 /* back.caf */,
+			);
+			path = sounds;
+			sourceTree = "<group>";
+		};
 		A99A87EE16D8A90600C29688 = {
 			isa = PBXGroup;
 			children = (
@@ -557,6 +573,7 @@
 				A98872F916DCBD0C00478258 /* PlayGameLayer.h */,
 				A937C2EC16E19430001B01D6 /* TouchableSprite.m */,
 				A98872FA16DCBD0C00478258 /* PlayGameLayer.m */,
+				A990B63E16F739D100F81DE2 /* sounds */,
 				A98873E216DDC07100478258 /* TouchableSprite.h */,
 				A99D1EB416E8E7640012781B /* MainMenuLayer.m */,
 				A99A896516D8A90800C29688 /* GameConfig.h */,
@@ -1078,6 +1095,9 @@
 				A9F6104216F5E06A00ADE3E4 /* 3_8.json in Resources */,
 				A9F6104316F5E06A00ADE3E4 /* 3_9.json in Resources */,
 				A9F6104416F5E06A00ADE3E4 /* 3_10.json in Resources */,
+				A990B64016F739D100F81DE2 /* back.caf in Resources */,
+				A990B64216F73BE400F81DE2 /* right.caf in Resources */,
+				A990B64416F73D0400F81DE2 /* wrong.caf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

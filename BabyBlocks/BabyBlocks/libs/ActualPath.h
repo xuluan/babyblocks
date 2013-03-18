@@ -10,7 +10,7 @@ NSString* getActualPath( NSString* file )
 	return actualPath;
 }
 
-BOOL initial_settings
+BOOL initial_settings()
 {
     BOOL success;
     NSFileManager* fileManager = [NSFileManager defaultManager]; 
@@ -22,7 +22,7 @@ BOOL initial_settings
     // The writable database does not exist, so copy the default to the appropriate location.
     NSString *defaultDBPath = getActualPath(@"settings.json");
 
-    success = [fileManager copyItemAtPath:defaultDBPath toPath:writableDBPath error:&error]; 
+    success = [fileManager copyItemAtPath:defaultDBPath toPath:writableDBPath error:nil];
     
     return success;
 }
@@ -36,6 +36,9 @@ NSDictionary* loadSettings()
         return nil;
     }
 
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+    NSString *documentsDirectory = [paths objectAtIndex:0];
+    
     NSString *path = [documentsDirectory stringByAppendingPathComponent:@"settings.json"];
 
 
@@ -56,8 +59,11 @@ void saveSettings(NSDictionary *dictionary) {
     if(error){
         NSLog(@"json save error %@\n", error);
     }
-    NSString *path = [documentsDirectory stringByAppendingPathComponent:@"settings.json"];
 
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+    NSString *documentsDirectory = [paths objectAtIndex:0];
+    
+    NSString *path = [documentsDirectory stringByAppendingPathComponent:@"settings.json"];
     
     //NSString *str = [[NSString alloc] initWithContentsOfFile:dir encoding:NSUTF8StringEncoding error:nil];
     //NSLog(@"str %@\n", str);

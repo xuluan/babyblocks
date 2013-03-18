@@ -6,10 +6,10 @@
 //
 //
 
+
 #import "PlayGameLayer.h"
 #import "CJSONDeserializer.h"
 #import "ActualPath.h"
-#import "SimpleAudioEngine.h"
 
 
 enum {
@@ -118,7 +118,8 @@ float qDistance(CGPoint p1, CGPoint p2){
 	if( (self=[super init] )) {
         self.isTouchEnabled = YES;
         currentStatus = S_FREE;
-        //[self initSounds];
+        
+        [self initSounds];
         [self createLevel];
 
 	}
@@ -347,12 +348,25 @@ float qDistance(CGPoint p1, CGPoint p2){
     return sound;
 }
 
+-(void) playSoundFile:(NSString*)fn {
+	//Get sound
+	CDSoundSource *sound = [soundSources objectForKey:fn];
+	
+	//Play sound
+	[sound play];
+}
+
 
 -(void) initSounds
 {
+    sae = [SimpleAudioEngine sharedEngine];
+
     [[CDAudioManager sharedManager] setResignBehavior:kAMRBStopPlay autoHandle:YES];
     soundSources = [[NSMutableDictionary alloc] init];
-    [self loadSoundEffect:@"crazy_chimp.caf"];
+    [self loadSoundEffect:@"back.caf"];
+    [self loadSoundEffect:@"right.caf"];
+    [self loadSoundEffect:@"wrong.caf"];
+
 
 
 }  
@@ -371,7 +385,7 @@ float qDistance(CGPoint p1, CGPoint p2){
 {
     [readyBlocks release];
     [usedBlocks release];
-    //[currentLayout release];
+    
     [movingBlock release];
 	
     [self removeAllChildrenWithCleanup:YES];
@@ -380,8 +394,8 @@ float qDistance(CGPoint p1, CGPoint p2){
 - (void) dealloc
 {
     [self cleanLevel];
-    //[self cleanSounds];
-
+    [self cleanSounds];
+    [currentLayout release];
 	[super dealloc];
 }
 
@@ -424,7 +438,7 @@ float qDistance(CGPoint p1, CGPoint p2){
     
     
 }
-- prevLevel
+-(void) prevLevel
 {
     currentStatus = S_BUSY;
     currentLevel = (currentLevel == 1) ?  currentMaxLevel:currentLevel-1;
@@ -517,7 +531,8 @@ float qDistance(CGPoint p1, CGPoint p2){
 {
     CGPoint point;
     CGPoint point2 = [movingBlock position];
-  
+    [self playSoundFile:@"back.caf"];
+
     for(id sprite in readyBlocks){
         TouchableSprite *readyblock = sprite;
         if(readyblock.colorIndex == movingBlock.colorIndex){
@@ -611,7 +626,13 @@ float qDistance(CGPoint p1, CGPoint p2){
 
 
     [[currentMap objectForKey:pos] setValue:[NSNumber numberWithInt:c] forKey:@"now"];
-    //NSLog(@"ad %@ %d\n", pos, c);
+    
+    NSMutableDictionary* node = [currentMap objectForKey:pos];
+    if([node objectForKey:@"exp"] == [node objectForKey:@"now"]) {
+        [self playSoundFile:@"right.caf"];
+    } else {
+        [self playSoundFile:@"wrong.caf"];
+    }
 }
 
 -(CCParticleExplosion*) getEffect {
@@ -674,8 +695,10 @@ float qDistance(CGPoint p1, CGPoint p2){
 	UITouch *touch = [touches anyObject];
 	CGPoint point = [touch locationInView: [touch view]];
 	point = [[CCDirector sharedDirector] convertToGL: point];
+    
 	
     if(movingBlock) {
+
         [movingBlock ccTouchesEnded:touches withEvent:event];
         if(pointIsInRect(point, padRect)){
             bool overlap = NO;
@@ -686,7 +709,7 @@ float qDistance(CGPoint p1, CGPoint p2){
             }
             
             for(id sprite in usedBlocks){
-                if(CGPointEqualToPoint([ sprite position], pos) ){
+                if(CGPointEqualToPoint([(TouchableSprite *)sprite position], pos) ){
                     overlap = YES;
                     break;
                 }

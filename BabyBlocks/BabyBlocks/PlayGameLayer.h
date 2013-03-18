@@ -8,6 +8,7 @@
 #import "cocos2d.h"
 #import "CCLayer.h"
 #import "TouchableSprite.h"
+#import "SimpleAudioEngine.h"
 
 
 @interface PlayGameLayer : CCLayer
@@ -18,6 +19,9 @@
     TouchableSprite *newBlock;
     TouchableSprite *pad;
     CCSprite *shadow;
+    
+    SimpleAudioEngine *sae;
+
 
     NSMutableDictionary *soundSources;
 
@@ -60,16 +64,15 @@
 -(void) loadLayout;
 -(void) initReadyBox;
 -(void) drawPad:(int) offset;
--(void)drawMap:(id)node;
+-(void) drawMap:(id)node;
 -(void) loadLevel;
--(void) help:(id) sender;
+-(void) help:(id)sender;
 -(void) quit:(id)sender;
 -(void) next:(id)sender;
 -(void) prev:(id)sender;
 
 -(void) nextLevel;
 -(void) prevLevel;
-
 -(void) drawIcon;
 -(void) drawBG;
 -(bool) isWin;
