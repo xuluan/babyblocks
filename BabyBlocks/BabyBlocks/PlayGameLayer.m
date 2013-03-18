@@ -373,12 +373,16 @@ float qDistance(CGPoint p1, CGPoint p2){
 
 -(void) cleanSounds
 {
+	[sae stopBackgroundMusic];
+
     for(id s in soundSources){
         //Release source
         CDSoundSource *source = [soundSources objectForKey:s];
         [source release];
     }
     [soundSources release];
+    [SimpleAudioEngine end];
+	sae = nil;
 }
 
 -(void) cleanLevel
@@ -698,15 +702,14 @@ float qDistance(CGPoint p1, CGPoint p2){
     
 	
     if(movingBlock) {
-
+        if([self getChildByTag:TAG_SHADOW]){
+            [self removeChildByTag:TAG_SHADOW cleanup:YES];
+        }
+        
         [movingBlock ccTouchesEnded:touches withEvent:event];
         if(pointIsInRect(point, padRect)){
             bool overlap = NO;
             CGPoint pos = [self destPosition:point];
-            
-            if([self getChildByTag:TAG_SHADOW]){
-                [self removeChildByTag:TAG_SHADOW cleanup:YES];
-            }
             
             for(id sprite in usedBlocks){
                 if(CGPointEqualToPoint([(TouchableSprite *)sprite position], pos) ){
